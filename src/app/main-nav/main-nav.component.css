@@ -1,0 +1,60 @@
+.sidenav-container {
+    height: 100%;
+}
+
+.sidenav {
+  width: 200px;
+}
+
+.sidenav .mat-toolbar {
+  background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.side-list{
+  background-color: rgb(252, 116, 32);
+  min-height: 98.8%;
+  height: fit-content;
+  width: 100%;
+}
+.expandable-item {
+    background-color: rgb(252, 116, 32);
+    border-radius: 0px !important;
+    box-shadow: none;
+}
+
+.toolbar{
+  height: 80px;
+}
+.right {
+  position: absolute;
+  right: 0px;
+  width: 10%;
+}
+
+.otrocolor{
+  background-color: rgb(240, 171, 69);
+  background-color: rgb(255,99,0);
+}
+
+.text{
+  
+  color: black;
+}
+
+.menu-button {
+    transition: 300ms ease-in-out;
+    transform: rotate(0deg);
+}
+
+.menu-button.rotated {
+    transform: rotate(180deg);
+}
+
+.expand {
+    width: 100%;
+}

@@ -1,0 +1,57 @@
+.example-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+.example-full-width {
+    width: 100%;
+  }
+
+.login {
+    padding-top: 10%;
+    padding-bottom: 14%;
+    padding-left: 30%;
+    max-width: 35%;
+    align-self: center;
+}
+
+.submit {
+    text-align:end;
+    margin-right: 10%;
+}
+
+.form-title {
+    text-align:center;
+}
+
+.form-input {
+    padding: 5%;
+}
+.line{
+    background-color: blueviolet;
+    width: 97.8%;
+}
+.text-top{
+    padding-top: 1%;
+    padding-left: 1%;
+    color: white;
+}
+.back{
+    background-color: gray;
+
+}
+.card-color{
+    background-color: rgb(221, 221, 221);
+}
+
+.border{
+    border-color: black;
+}
+.text-tittle{
+    text-align: center;
+    color:blueviolet;
+}
+.button{
+    width: 30%;
+}
