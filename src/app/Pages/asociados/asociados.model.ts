@@ -1,6 +1,6 @@
 ﻿
 export interface Servicio {
-    id: number,
+    id: number | any,
     nombre: string,
     id_categoria: number | any,
     id_subcategoria: number | any,
@@ -8,7 +8,7 @@ export interface Servicio {
 }
 
 export interface Img {
-    id: number,
+    id: number | any,
     id_categoria: number | any,
     id_subcategoria: number | any,
     id_atractivo: number | any,
@@ -18,7 +18,7 @@ export interface Img {
 }
 
 export interface Asociado {
-    id: number,
+    id: number | any,
     nombre: string,
     descripcion: string,
     facebook: string | any,

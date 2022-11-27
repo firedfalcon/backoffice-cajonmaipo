@@ -1,17 +1,17 @@
 ﻿
 export interface Categoria{
-    id: number,
+    id: number | any,
     nombre: string
 }
 
 export interface Subcategoria {
-    id: number,
+    id: number | any,
     id_categoria: number,
     nombre: string
 }
 
 export interface Parrafo {
-    id: number,
+    id: number  | any,
     id_atractivo: number | any,
     id_categoria: number | any,
     id_subcategoria: number | any,
@@ -22,7 +22,7 @@ export interface Parrafo {
 }
 
 export interface Servicio {
-    id: number,
+    id: number | any,
     nombre: string,
     id_categoria: number | any,
     id_subcategoria: number | any,

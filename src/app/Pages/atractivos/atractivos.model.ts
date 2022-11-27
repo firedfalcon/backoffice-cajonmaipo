@@ -1,9 +1,4 @@
 ﻿
-export interface Categoria {
-    id: number,
-    nombre: string
-}
-
 export interface Atractivo {
     id: number,
     id_categoria: number,
