@@ -2,7 +2,9 @@
 export interface Atractivo {
     id: number,
     id_categoria: number,
-
+    nombre: string, // Unique
+    estado: string,
+    ubicacion: string // Unique
 }
 
 export interface Img {
@@ -12,7 +14,7 @@ export interface Img {
     id_atractivo: number | any,
     id_asociado: number | any,
     tipo: string,
-    path: string
+    path: string // Unique
 }
 
 export interface Parrafo {
@@ -29,5 +31,5 @@ export interface Parrafo {
 export interface Tipo_parrafo {
     id: number,
     relevancia: number,
-    nombre: string;
+    nombre: string; // Unique
 }

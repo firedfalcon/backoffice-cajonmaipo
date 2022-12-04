@@ -1,9 +1,12 @@
 .sidenav-container {
     height: 100%;
+    border-style:solid;
+    border-width: thin;
 }
 
 .sidenav {
-  width: 200px;
+    width: 200px;
+    border-style: solid;
 }
 
 .sidenav .mat-toolbar {
@@ -11,15 +14,20 @@
 }
 
 .mat-toolbar.mat-primary {
-  position: sticky;
   top: 0;
   z-index: 1;
 }
-.side-list{
-  background-color: rgb(252, 116, 32);
-  min-height: 98.8%;
-  height: fit-content;
-  width: 100%;
+
+.discarded {
+    position: sticky;
+}
+
+
+.side-list {
+    background-color: rgb(252, 116, 32);
+    min-height: 98.8%;
+    height: fit-content;
+    width: 100%;
 }
 .expandable-item {
     background-color: rgb(252, 116, 32);
@@ -28,7 +36,9 @@
 }
 
 .toolbar{
-  height: 80px;
+  height: 90px;
+  padding-top: 3%;
+  padding-bottom: 3%;
 }
 .right {
   position: absolute;
@@ -42,7 +52,6 @@
 }
 
 .text{
-  
   color: black;
 }
 

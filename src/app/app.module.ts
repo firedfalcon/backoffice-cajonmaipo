@@ -19,11 +19,14 @@ import { AsociadosComponent } from './Pages/asociados/asociados.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { LoginComponent} from './login/login.component';
 import { MainNavComponent } from './main-nav/main-nav.component';
+import { AdminComponent } from './admin/admin.component';
 // Services
 import { JwtModule } from '@auth0/angular-jwt';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
-import { AdminComponent } from './admin/admin.component';
+import { DataService } from './services/data.service';
+// Font awesome icons
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 export function tokenGetter() {
     return sessionStorage.getItem('access_token');
@@ -59,12 +62,14 @@ export function tokenGetter() {
                 
             ]
         }
-    })
+    }),
+    FontAwesomeModule
   ],
     providers: [
         {provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
         AuthService,
-        AuthGuard
+        AuthGuard,
+        DataService
     ],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

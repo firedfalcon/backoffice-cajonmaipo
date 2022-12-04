@@ -1,13 +1,13 @@
 ﻿
 export interface Categoria{
     id: number | any,
-    nombre: string
+    nombre: string // Unique
 }
 
 export interface Subcategoria {
     id: number | any,
     id_categoria: number,
-    nombre: string
+    nombre: string // Unique
 }
 
 export interface Parrafo {
