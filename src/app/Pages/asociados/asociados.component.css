@@ -6,7 +6,7 @@
 
 .asociadoInput {
     min-width: 80%;
-    height: 70%;
+    min-height: 100%;
 }
 
 .asociadoRow {
@@ -53,3 +53,7 @@
 .inputFileBtn {
     background-color:cadetblue;
 }
+
+#table {
+    width: 100%;
+} 

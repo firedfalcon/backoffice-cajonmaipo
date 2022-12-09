@@ -2,7 +2,7 @@
 import { Asociado, Categoria, Subcategoria, Servicio, Atractivo, Img, Parrafo, Tipo_parrafo } from './data.model';
 
 import { HttpClient } from '@angular/common/http';
-import { Observable, timer, Subscription, Subject } from 'rxjs';
+import { Observable, timer, Subscription, Subject, of, BehaviorSubject } from 'rxjs';
 import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
 
@@ -13,28 +13,30 @@ export class DataService implements OnDestroy, OnInit{
 
     // local DB
     asociados: Asociado[] = [];
-    asociados$: Subject<Asociado[]> = new Subject<Asociado[]>();
+    asociados$ = new BehaviorSubject<Asociado[]>([]);
 
     atractivos: Atractivo[] = [];
-    atractivos$: Subject<Atractivo[]> = new Subject<Atractivo[]>();
+    atractivos$ = new BehaviorSubject<Atractivo[]>([]);
 
     categorias: Categoria[] = [];
-    categorias$: Subject<Categoria[]> = new Subject<Categoria[]>();
+    categorias$ = new BehaviorSubject<Categoria[]>([]);
 
     subcategorias: Subcategoria[] = [];
-    subcategorias$: Subject<Subcategoria[]> = new Subject<Subcategoria[]>();
+    subcategorias$ = new BehaviorSubject<Subcategoria[]>([]);
 
     servicios: Servicio[] = [];
-    servicios$: Subject<Servicio[]> = new Subject<Servicio[]>();
+    servicios$ = new BehaviorSubject<Servicio[]>([]);
 
     imgs: Img[] = [];
-    imgs$: Subject<Img[]> = new Subject<Img[]>();
+    imgs$ = new BehaviorSubject<Img[]>([]);
 
     parrafos: Parrafo[] = [];
-    parrafos$: Subject<Parrafo[]> = new Subject<Parrafo[]>();
+    parrafos$ = new BehaviorSubject<Parrafo[]>([]);
 
     tipos_parrafo: Tipo_parrafo[] = [];
-    tipos_parrafo$: Subject<Tipo_parrafo[]> = new Subject<Tipo_parrafo[]>();
+    tipos_parrafo$ = new BehaviorSubject<Tipo_parrafo[]>([]);
+
+    private stop  = new Subject();
 
     constructor(
 
@@ -172,23 +174,31 @@ export class DataService implements OnDestroy, OnInit{
     }
 
     ngOnInit() {
-        this.asociados$.next(this.asociados);
-        this.atractivos$.next(this.atractivos);
-        this.categorias$.next(this.categorias);
-        this.subcategorias$.next(this.subcategorias);
-        this.servicios$.next(this.servicios);
-        this.imgs$.next(this.imgs);
-        this.parrafos$.next(this.parrafos);
-        this.tipos_parrafo$.next(this.tipos_parrafo);
     }
 
     // CRUD Asociado
     getAsociados$(): Observable<Asociado[]>{
-        return this.asociados$.asObservable();
+        return this.asociados$;
     }
 
-    getAsociados() {
-        return this.asociados;
+    newAsociadoId() {
+        var id;
+        if (this.asociados.length != (null || undefined) ){
+            id = this.asociados[this.asociados.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
+    getAsociado(id: number) {
+        var found;
+        this.asociados.forEach(asociado => {
+            if (asociado.id == id) {
+                found = asociado;
+            }
+        });
+        return found;
     }
 
     addAsociado( asociado: Asociado ) {
@@ -292,6 +302,27 @@ export class DataService implements OnDestroy, OnInit{
     getServicios$(): Observable<Servicio[]> {
         return this.servicios$.asObservable();
     }
+
+    getServsAsoc(id:number) {
+        var found = this.servicios;
+        found.forEach( (servicio,index) => {
+            if (servicio.id_asociado != id) {
+                found.splice(index, 1);
+            }
+        });
+        return found;
+    }
+
+    newServicioId() {
+        var id;
+        if (this.servicios.length != (null || undefined)) {
+            id = this.servicios[this.servicios.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addServicio(servicio: Servicio) {
         this.servicios.push(servicio);
         this.servicios$.next(this.servicios);
@@ -328,7 +359,7 @@ export class DataService implements OnDestroy, OnInit{
         });
         this.servicios$.next(this.servicios);
     }
-    delServAsoc(id: number) {
+    delServsAsoc(id: number) {
         this.servicios.forEach((servicio, index) => {
             if (servicio.id_asociado == id) {
                 this.servicios.splice(index, 1)
@@ -341,6 +372,27 @@ export class DataService implements OnDestroy, OnInit{
     getImages$(): Observable<Img[]> {
         return this.imgs$.asObservable();
     }
+
+    getImagesAsoc(id: number) {
+        var found = this.imgs;
+        found.forEach((image, index) => {
+            if (image.id_asociado != id) {
+                found.splice(index, 1);
+            }
+        });
+        return found;
+    }
+
+    newImageId() {
+        var id;
+        if (this.imgs.length != (null || undefined)) {
+            id = this.imgs[this.imgs.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addImage( img: Img ) {
         this.imgs.push(img);
         this.imgs$.next(this.imgs);
@@ -421,6 +473,6 @@ export class DataService implements OnDestroy, OnInit{
     }
 
     ngOnDestroy() {
-
+        this.stop.next(true);
     }
 }

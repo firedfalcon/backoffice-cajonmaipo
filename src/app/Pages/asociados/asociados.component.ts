@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy} from '@angular/core';
+import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy, AfterViewInit, ViewChild} from '@angular/core';
 import { Servicio, Img, Asociado } from './asociados.model';
 import { AsociadosService } from './asociados.service';
 import { DataService } from '../../services/data.service';
@@ -12,21 +12,17 @@ import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { faInstagram, faTwitter, faWhatsapp, faYoutube } from '@fortawesome/free-brands-svg-icons';
+import { DataSource } from '@angular/cdk/collections';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-asociados',
   templateUrl: './asociados.component.html',
   styleUrls: ['./asociados.component.css'],
-  encapsulation: ViewEncapsulation.None,
-    providers: [AsociadosService,
-                DataService
-    ]
+  encapsulation: ViewEncapsulation.None
 })
-export class AsociadosComponent implements OnInit, OnDestroy{
 
-    // Display
-    asociados$: Observable<Asociado[]> = new Observable();
-    dataSource: MatTableDataSource<Asociado>;
+export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
 
     // Dynamic table
     displayedColumns: string[] = [
@@ -43,7 +39,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
         "telefono",
         "opciones"
     ];
-    asociados: Asociado[] = [];
+    asociados = new MatTableDataSource<Asociado>();
 
     // Elements helpers
     addOnBlur = true;
@@ -57,7 +53,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
     faYoutube = faYoutube;
 
     // Asociado
-    asociado: Asociado | any;
+    asociado: Asociado;
     servs: Servicio[] = []; // Saving servicios
     images: Img[] = []; // Uploading images
 
@@ -70,28 +66,39 @@ export class AsociadosComponent implements OnInit, OnDestroy{
         tipo: 'logo',
         path: ".png, .jpg, .jpeg"
     };
-    
+
+    private unsubscribe: Subject<any> = new Subject<any>(); 
+
     constructor(
         private asociadosService: AsociadosService,
         private dataService: DataService,
         public dialog: MatDialog
     ) {
-        this.defaultAsociado();
+        this.asociado = this.defaultAsociado();
         this.defaultLogo();
-        this.dataSource = new MatTableDataSource(this.asociados);
     }
 
     ngOnInit() {
-        this.asociados$ = this.asociadosService.getAsociados$()
-        this.asociados$.subscribe(rs => {
-            this.asociados = rs;
-            this.dataSource = new MatTableDataSource(rs);
-            console.log(rs)
-        });
+        this.dataService.getAsociados$().pipe(takeUntil(this.unsubscribe)).subscribe(
+            {
+                next: (data) => {
+                    this.asociados.data = data
+                },
+                error: (err) => {
+                    console.log(err)
+                },
+                complete: () => { }
+            }
+        );
+    }
+
+    ngAfterViewInit() { 
+        
     }
 
     ngOnDestroy() {
-
+        this.unsubscribe.next(null);
+        this.unsubscribe.complete();
     }
 
     // Chip input servicios element events
@@ -141,6 +148,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
 
     // Image upload element events
     uploadLogo(fileInputEvent: any) {
+ 
         if (!fileInputEvent.target.files.length) {
             this.defaultLogo();
         } else {
@@ -150,11 +158,12 @@ export class AsociadosComponent implements OnInit, OnDestroy{
     }
 
     uploadImages(fileInputEvent: any) {
+
         var images = fileInputEvent.target.files.length;
         if (images <= 6) {
             this.images = [];
             for (var i = 0; images -1; i++) {
-                if (fileInputEvent.target.files[i].name != undefined) {
+                if (fileInputEvent.target.files[i].name != undefined || fileInputEvent.target.files[i].name != null) {
                     this.addImage(fileInputEvent.target.files[i].name);
                 }
             }
@@ -179,7 +188,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
 
     // Clear/Start Asociado form
     defaultAsociado() {
-        this.asociado = {
+        return {
             id: undefined,
             nombre: "", // Unique
             descripcion: "",
@@ -195,38 +204,39 @@ export class AsociadosComponent implements OnInit, OnDestroy{
     }
 
     defaultLogo() {
-        this.logo = {
+        return {
             id: undefined,
             id_asociado: undefined,
             id_atractivo: undefined,
             id_categoria: undefined,
             id_subcategoria: undefined,
             tipo: 'logo',
-            path: ".png, .jpg, .jpeg"
+            path: ""
         };
     }
 
-    submit() {
-        this.defaultAsociado();
-        this.tabAsociados = 1;
+    Submit() {
+        if (this.asociado.nombre != (undefined || null || "")) {
+            var imgs = this.images;
+            imgs.push(this.logo);
+
+            this.asociadosService.newAsociado(this.asociado, this.servs, imgs);
+
+            this.asociado = this.defaultAsociado();
+            this.logo = this.defaultLogo();
+            this.images = [];
+            this.servs = [];
+            this.tabAsociados = 1;
+        } else {
+            // *Marcar errores
+        }
+        
     }
 
     // Modal Editar
-    Editar(i: number): void {
+    Editar(id: number): void {
 
-        var asociado = {
-                index: i,
-                nombre: this.asociados[i].nombre, // Unique
-                descripcion: this.asociados[i].descripcion,
-                facebook: this.asociados[i].facebook,
-                instagram: this.asociados[i].instagram,
-                twitter:    this.asociados[i].twitter,
-                youtube:    this.asociados[i].youtube,
-                whatsapp:   this.asociados[i].whatsapp,
-                web:        this.asociados[i].web,
-                email:      this.asociados[i].email,
-                telefono: this.asociados[i].telefono,
-        };
+        var asociado = this.asociadosService.getAsociado(id);
 
         var servicios = new Array;
         // *Obtener servicios
@@ -248,7 +258,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
 
             if (!(result == undefined)) {
                // *Recibir data modal 
-               console.log('Cambios realizados en la posición', i);
+               console.log('Cambios guardados ', id);
             } else {
                console.log('Cambios cancelados');
                editModal.close();
@@ -258,8 +268,7 @@ export class AsociadosComponent implements OnInit, OnDestroy{
 
     }
 
-    Borrar(i: number) {
-        var id = this.asociados[i].id;
+    Borrar(id: number) {
         this.asociadosService.delAsociado(id);
     }
 }
@@ -270,9 +279,6 @@ export class AsociadosComponent implements OnInit, OnDestroy{
     templateUrl: './edit-asociado.html',
     styleUrls: ['./asociados.component.css'],
     encapsulation: ViewEncapsulation.None,
-    providers: [
-        AsociadosService
-    ]
 })
 
 export class editAsociado {

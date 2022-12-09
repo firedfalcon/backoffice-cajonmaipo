@@ -3,119 +3,96 @@ import { Servicio, Img, Asociado } from './asociados.model';
 import { DataService } from '../../services/data.service';
 
 import { HttpClient } from '@angular/common/http';
-import { Observable, timer, Subscription, Subject } from 'rxjs';
-import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
+import { Observable, timer, Subscription, Subject, asyncScheduler, of } from 'rxjs';
+import { switchMap, tap, share, retry, takeUntil, map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AsociadosService implements OnDestroy {
 
-    private servicios: Servicio[] = [];
-    private servicios$: Observable<Servicio[]>;
-
-    private imgs: Img[] = [];
-    private imgs$: Observable<Img[]>;
-
-    private asociados: Asociado[] = [];
-    private asociados$: Observable<Asociado[]> = new Observable();
-
-    private stop = new Subject();
-
     constructor(
         private http: HttpClient,
         private dataService: DataService
     ) {
 
-        this.asociados$ = timer(1, 3000).pipe(
-            switchMap(() => this.dataService.getAsociados()),
-            retry(),
-            tap(console.log),
-            share(),
-            takeUntil(this.stop)
-        );
-
-        this.servicios$ = this.dataService.getServicios$();
-        this.servicios$.subscribe(servicios => this.servicios = servicios);
-
-        this.imgs$ = this.dataService.getImages$();
-        this.imgs$.subscribe(imgs => this.imgs = imgs);
-
     }
 
-    getAsociados$(): Observable<Asociado[]> {
-        return this.asociados$
+    getAsociado(id:number) {
+        return this.dataService.getAsociado(id);
     }
 
-    newAsociado( asociado: Asociado, servicios: Servicio[] ) {
+    getServsAsc(id:number) {
+        return this.dataService.getServsAsoc(id);
+    }
 
-        if ( this.asociados.length == null || this.asociados.length == undefined ) {
+    getImagesAsoc(id: number) {
+        return this.dataService.getImagesAsoc(id);
+    }
 
-            asociado.id = 0;
-        } else {
+    newAsociado( asociado: Asociado, servicios: Servicio[], images: Img[] ) {
 
-            asociado.id = this.asociados[this.asociados.length - 1].id + 1;
-        }
+        asociado.id = this.dataService.newAsociadoId();       
         this.dataService.addAsociado(asociado);
 
-        if (servicios.length == null || servicios.length == undefined) {
+        if (servicios.length != (null || undefined)) {
+            servicios.forEach( servicio => {
+                servicio.id_asociado = asociado.id           
+                servicio.id = this.dataService.newServicioId();
 
-        } else {
-
-            servicios.forEach((servicio, index) => {
-                servicio.id_asociado = asociado.id
-
-                if ( this.servicios.length == null || this.servicios.length == undefined ) {
-                    servicio.id = 0
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
                 this.dataService.addServicio(servicio);
             })
         }
 
+        if (images.length != (null || undefined)) {
+            images.forEach( image => {
+                image.id_asociado = asociado.id          
+                image.id = this.dataService.newImageId();
+
+                this.dataService.addImage(image);
+            })
+        }
     }
 
-    updtAsociado( asociado: Asociado, servicios: Servicio[]) {
+    updtAsociado( asociado: Asociado, servicios: Servicio[], images: Img[]) {
 
         this.dataService.updtAsociado(asociado);
 
-        if (!(servicios.length == null || servicios.length == undefined)){
+        if (servicios.length != (null || undefined)){
 
-            if (!(this.servicios.length == null || this.servicios.length == undefined)){
+            this.dataService.delServsAsoc(asociado.id);
 
-                this.dataService.delServAsoc(asociado.id);
-            }
-
-            servicios.forEach((servicio, index) => {
+            servicios.forEach( servicio => {
                 servicio.id_asociado = asociado.id
-
-                if (!(this.servicios.length == null || this.servicios.length == undefined)) {
-                    servicio.id = 0;
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
+                servicio.id = this.dataService.newServicioId;
+                
                 this.dataService.addServicio(servicio);
             })
         }
+
+        if (images.length != (null || undefined)) {
+
+            this.dataService.delImagesAsoc(asociado.id);
+
+            images.forEach( image => {
+                image.id_asociado = asociado.id
+                image.id = this.dataService.newImageId();
+
+                this.dataService.addImage(image);
+            })
+        }
+
     }
 
     delAsociado( id: number ) {
 
-        this.delAsociado(id);
-
-        if (!(this.servicios.length == null || this.servicios.length == undefined)) {
-
-            this.dataService.delServAsoc(id);
-        }
-        if (!(this.imgs.length == null || this.imgs.length == undefined)) {
-
-            this.dataService.delImagesAsoc(id);
-        }
+        this.dataService.delAsociado(id);
+        this.dataService.delServsAsoc(id);       
+        this.dataService.delImagesAsoc(id);
+       
     }
 
     ngOnDestroy() {
-        this.stop.next(true);
     }
 
 }
