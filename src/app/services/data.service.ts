@@ -3,8 +3,6 @@ import { Asociado, Categoria, Subcategoria, Servicio, Atractivo, Img, Parrafo, T
 
 import { HttpClient } from '@angular/common/http';
 import { Observable, timer, Subscription, Subject, of, BehaviorSubject } from 'rxjs';
-import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 
 @Injectable({
     providedIn: 'root'
@@ -83,84 +81,91 @@ export class DataService implements OnDestroy, OnInit{
                 telefono: 962182546
             }
         ];
-        this.atractivos = [];
-        this.categorias = [];
-        this.subcategorias = [];
-        this.servicios = [
-            {
-                id:0,
-                id_asociado:0,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Hotel'
-                },
-            {
-                id:1,
-                id_asociado:0,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Spa'
-                },
-            {
-                id:2,
-                id_asociado:0,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Restaurante'
-                },
-            {
-                id: 3,
-                id_asociado: 0,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Centro de Eventos'
-                },
-            {
-                id:4,
-                id_asociado:1,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Cabañas'
-                },
-            {
-                id:5,
-                id_asociado:1,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Centro de Eventos'
-                },
-            {
-                id:6,
-                id_asociado:1,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Hostería'
-                },
-            {
-                id:7,
-                id_asociado:1,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Restaurante'
-                },
-            {
-                id:8,
-                id_asociado:1,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Spa'
-                },
-            {
-                id:9,
-                id_asociado:2,
-                id_categoria:undefined,
-                id_subcategoria:undefined,
-                nombre:'Cervecería Artesanal'
-                }
+        this.atractivos = [
+            { id: 57,id_categoria: 16,nombre: "Mirador de Cóndores", estado: "cerrado", ubicacion: "Estacionamiento Sendero Mirador de Cóndores"},
+            { id: 58,id_categoria: 16,nombre: "Cascada de las Ánimas", estado: "abierto", ubicacion: "Cascada de las Animas, Cajón del Maipo - Camino Al Volcán 31087, Casilla 57, San Alfonso, San José de Maipo, Región Metropolitana"},
+            { id: 59,id_categoria: 16,nombre: "Laguna de los Patos", estado: "abierto", ubicacion: "Termas Del Plomo, San José de Maipo, Región Metropolitana"}
         ];
-        this.imgs = [];
-        this.parrafos = [];
-        this.tipos_parrafo = [];
+        this.categorias = [
+            {id: 15, nombre: "Inicio"},
+            {id: 16, nombre: "Atractivos"},
+            {id: 17, nombre: "Hospedajes"},
+            {id: 18, nombre: "Actividades"},
+            {id: 19, nombre: "Gastronomía"},
+            {id: 20, nombre: "Cerveza"},
+            {id: 21, nombre: "Relax"},
+            {id: 22, nombre: "Eventos"},
+            {id: 23, nombre: "Tiendas"},
+            {id: 24, nombre: "Cámara Turismo"}    
+        ];
+        this.subcategorias = [
+            {id: 1,  id_categoria: 17, nombre: "Camping"},
+            {id: 2,  id_categoria: 17, nombre: "Cabañas"},
+            {id: 3,  id_categoria: 17, nombre: "Hoteles"},
+            {id: 4,  id_categoria: 17, nombre: "Domos"},
+            {id: 5,  id_categoria: 17, nombre: "Hostales"},
+            {id: 6,  id_categoria: 17, nombre: "Hosterías"},
+            {id: 7,  id_categoria: 18, nombre: "Trekking"},
+            {id: 8,  id_categoria: 18, nombre: "Rafting"},
+            {id: 9,  id_categoria: 18, nombre: "Ciclismo"},
+            {id: 10, id_categoria: 18, nombre: "Astronomía"},
+            {id: 11, id_categoria: 18, nombre: "Canopy"},
+            {id: 12, id_categoria: 18, nombre: "Tours"},
+            {id: 13, id_categoria: 18, nombre: "Piscinas"},
+            {id: 14, id_categoria: 21, nombre: "Tinajas"},
+            {id: 15, id_categoria: 21, nombre: "Spa"},
+            {id: 16, id_categoria: 21, nombre: "Piscinas Temperadas"}                
+        ];
+        this.servicios = [
+            {id:0,id_asociado:0,id_categoria:undefined,id_subcategoria:undefined,nombre:'Hotel'},
+            {id:1,id_asociado:0,id_categoria:undefined,id_subcategoria:undefined,nombre:'Spa'},
+            {id:2,id_asociado:0,id_categoria:undefined,id_subcategoria:undefined,nombre:'Restaurante'},
+            {id:3,id_asociado: 0,id_categoria:undefined,id_subcategoria:undefined,nombre:'Centro de Eventos'},
+            {id:4,id_asociado:1,id_categoria:undefined,id_subcategoria:undefined,nombre:'Cabañas'},
+            {id:5,id_asociado:1,id_categoria:undefined,id_subcategoria:undefined,nombre:'Centro de Eventos'},
+            {id:6,id_asociado:1,id_categoria:undefined,id_subcategoria:undefined,nombre:'Hostería'},
+            {id:7,id_asociado:1,id_categoria:undefined,id_subcategoria:undefined,nombre:'Restaurante'},
+            {id:8,id_asociado:1,id_categoria:undefined,id_subcategoria:undefined,nombre:'Spa'},
+            {id:9,id_asociado:2,id_categoria:undefined,id_subcategoria:undefined,nombre:'Cervecería Artesanal'}
+        ];
+        this.imgs = [
+            {id: 170, id_asociado: undefined,id_atractivo: 59,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Imagen-1-Laguna-de-los-Patos-Cajon-del-Maipo.jpg"},
+            {id: 171, id_asociado: undefined,id_atractivo: 59,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Imagen-2-Laguna-de-los-Patos-Cajon-del-Maipo.jpg"},
+            {id: 163, id_asociado: undefined,id_atractivo: 57,id_categoria: undefined,id_subcategoria: undefined,tipo: "thumbnail", path:"images/atractivos/Atractivos-Mirador-de-condores.jpg"},
+            {id: 164, id_asociado: undefined,id_atractivo: 57,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Mirador-de-condores-atractivos-p2.jpg"},
+            {id: 165, id_asociado: undefined,id_atractivo: 57,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Mirador-de-condores-atractivos-p3.jpg"},
+            {id: 166, id_asociado: undefined,id_atractivo: 58,id_categoria: undefined,id_subcategoria: undefined,tipo: "thumbnail", path:"images/atractivos/Atractivos-Cascada-de-las-Animas.jpg"},
+            {id: 167, id_asociado: undefined,id_atractivo: 58,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Imagen-1-Cascada-de-las-Animas-Cajon-del-Maipo.jpg"},
+            {id: 168, id_asociado: undefined,id_atractivo: 58,id_categoria: undefined,id_subcategoria: undefined,tipo: "display", path:"images/atractivos/Imagen-2-Cascada-de-las-Animas-Cajon-del-Maipo.jpg"},
+            {id: 169, id_asociado: undefined,id_atractivo: 59,id_categoria: undefined,id_subcategoria: undefined,tipo: "thumbnail", path:"images/atractivos/Atractivos-Laguna-de-los-Patos.jpg"}          
+        ];
+        this.parrafos = [
+            {id: 373, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 1, titulo: "", subtitulo: "", cuerpo:""},    
+            {id: 374, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 2, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 376, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 3, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 378, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 4, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 380, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 6, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 382, id_atractivo: 57, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 7, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 384, id_atractivo: 58, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 1, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 385, id_atractivo: 58, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 2, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 387, id_atractivo: 58, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 4, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 389, id_atractivo: 58, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 6, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 391, id_atractivo: 58, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 7, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 393, id_atractivo: 59, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 1, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 394, id_atractivo: 59, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 2, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 396, id_atractivo: 59, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 4, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 398, id_atractivo: 59, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 6, titulo: "", subtitulo: "", cuerpo:""},
+            {id: 400, id_atractivo: 59, id_categoria: undefined, id_subcategoria: undefined, id_tipo_parrafo: 7, titulo: "", subtitulo: "", cuerpo:""}    
+        ];
+        this.tipos_parrafo = [
+            {id:1 ,relevancia:0 , nombre:"leyenda"},
+            {id:2 ,relevancia:1 , nombre:"descripcion"},
+            {id:3 ,relevancia:2 , nombre:"advertencia"},
+            {id:4 ,relevancia:3 , nombre:"indicaciones"},
+            {id:5 ,relevancia:4 , nombre:"acceso"},
+            {id:6 ,relevancia:5 , nombre:"recomendaciones"},
+            {id:7 ,relevancia:6 , nombre:"conclusion"}
+        ];
 
         this.asociados$.next(this.asociados);
         this.atractivos$.next(this.atractivos);
@@ -226,6 +231,17 @@ export class DataService implements OnDestroy, OnInit{
     getAtractivos$(): Observable<Atractivo[]>{
         return this.atractivos$.asObservable();
     }
+
+    newAtractivoId(){
+        var id;
+        if (this.atractivos.length){
+            id = this.atractivos[this.atractivos.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addAtractivo(atractivo: Atractivo) {
         this.atractivos.push(atractivo);
         this.atractivos$.next(this.atractivos);
@@ -252,6 +268,17 @@ export class DataService implements OnDestroy, OnInit{
     getCategorias$(): Observable<Categoria[]> {
         return this.categorias$.asObservable();
     }
+
+    newCategoriaId(){
+        var id;
+        if (this.categorias.length){
+            id = this.categorias[this.categorias.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addCategoria(categoria: Categoria) {
         this.categorias.push(categoria);
         this.categorias$.next(this.categorias);
@@ -277,6 +304,17 @@ export class DataService implements OnDestroy, OnInit{
     getSubcategorias$(): Observable<Subcategoria[]> {
         return this.subcategorias$.asObservable();
     }
+
+    newSubCategoriaId(){
+        var id;
+        if (this.subcategorias.length){
+            id = this.subcategorias[this.subcategorias.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addSubcategoria(subcategoria: Subcategoria) {
         this.subcategorias.push(subcategoria);
         this.subcategorias$.next(this.subcategorias);
@@ -426,6 +464,17 @@ export class DataService implements OnDestroy, OnInit{
     getParrafos$(): Observable<Parrafo[]> {
         return this.parrafos$.asObservable();
     }
+
+    newParrafoId() {
+        var id;
+        if (this.parrafos.length) {
+            id = this.parrafos[this.parrafos.length - 1].id + 1;
+        } else {
+            id = 0
+        }
+        return id;
+    }
+
     addParrafo( parrafo: Parrafo ) {
         this.parrafos.push(parrafo);
         this.parrafos$.next(this.parrafos);
