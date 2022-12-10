@@ -22,7 +22,6 @@
     position: sticky;
 }
 
-
 .side-list {
     background-color: rgb(252, 116, 32);
     min-height: 98.8%;
@@ -35,7 +34,7 @@
     box-shadow: none;
 }
 
-.toolbar{
+.mat-toolbar{
   height: 90px;
   padding-top: 3%;
   padding-bottom: 3%;

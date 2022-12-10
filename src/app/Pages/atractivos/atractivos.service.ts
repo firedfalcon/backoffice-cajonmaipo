@@ -1,110 +1,83 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Atractivo, Img, Parrafo, Tipo_parrafo } from './atractivos.model';
+import { DataService } from '../../services/data.service';
 
 import { HttpClient } from '@angular/common/http';
 import { Observable, timer, Subscription, Subject } from 'rxjs';
 import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AtractivosService implements OnDestroy {
 
-    private atractivos: Atractivo[] = [];
-    //private atractivos$ = new Subject<Atractivo[]>();
-    //private o_atractivos$: Observable<Atractivo[]>;
-
-    private parrafos: Parrafo[] = [];
-    //private parrafos$ = new Subject<Parrafo[]>();
-    //private o_parrafos$: Observable<Parrafo[]>;
-
-    private tparrafos: Tipo_parrafo[] = [];
-    //private tparrafos$ = new Subject<Tipo_parrafo[]>();
-    //private o_tparrafos$: Observable<Tipo_parrafo[]>;
-
-    private imgs: Img[] = [];
-    //private imgs$ = new Subject<Img[]>();
-    //private o_imgs$: Observable<Img[]>;
-
-    private stop = new Subject();
-
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private dataService: DataService
     ) {
-        this.atractivos = [];
-        this.parrafos   = [];
-        this.tparrafos  = [];
-        this.imgs = [];
+
     }
 
-    newAtractivo( atractivo: Atractivo, parrafos: Parrafo[] ) {
+    getAtractivo(id: number){
+        return this.dataService.getAtractivo(id);
+    }
 
-        if (isNullOrUndefined(this.atractivos.length)) {
+    getParrafosAtr(id: number){
+        return this.dataService.getParrafosAtr(id);
+    }
 
-            atractivo.id = 0;
-        } else {
+    getImagesAtr(id: number){
+        return this.dataService.getImagesAtr(id);
+    }
 
-            atractivo.id = this.atractivos[this.atractivos.length - 1].id + 1;
-        }
-        this.atractivos.push(atractivo);
+    newAtractivo( atractivo: Atractivo, parrafos: Parrafo[], images: Img[] ) {
 
-        if (isNullOrUndefined(parrafos.length)) {
+        atractivo.id = this.dataService.newAtractivoId();
+        this.dataService.addAtractivo(atractivo);
 
-        } else {
+        if(!parrafos.length){
 
-            parrafos.forEach((parrafo, index) => {
+            parrafos.forEach( parrafo => {             
                 parrafo.id_atractivo = atractivo.id
+                parrafo.id = this.dataService.newParrafoId();
+                this.dataService.addParrafo(parrafo);
+            });
+        }
 
-                if (isNullOrUndefined(this.parrafos.length)) {
-                    parrafo.id = 0
-                } else {
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+        if(!images.length){
+
+            images.forEach( image => {             
+                image.id_atractivo = atractivo.id
+                image.id = this.dataService.newImageId();
+                this.dataService.addImage(image);
+            });
+        }
+
+    }
+
+    updtAtractivo( atractivo: Atractivo, parrafos: Parrafo[], images: Img[] ) {
+
+        this.dataService.updtAtractivo(atractivo);
+
+        if (!parrafos.length) {
+            this.dataService.delParrafosAtr(atractivo.id);
+
+            parrafos.forEach( parrafo => {
+                parrafo.id_atractivo = atractivo.id
+                parrafo.id = this.dataService.newParrafoId();
+
+                this.dataService.addParrafo(parrafo);
             })
         }
 
-    }
+        if (!images.length) {
+            this.dataService.delImagesAtr(atractivo.id);
 
-    updtAtractivo( atractivo: Atractivo, parrafos: Parrafo[] ) {
+            images.forEach( image => {
+                image.id_atractivo = atractivo.id
+                image.id = this.dataService.newImageId();
 
-        this.atractivos.forEach((old_atractivo, index) => {
-
-            if (old_atractivo.id == atractivo.id) {
-
-                this.atractivos[index] = atractivo
-            }
-        });
-
-        if (isNullOrUndefined(parrafos.length)) {
-
-        } else {
-
-            if (isNullOrUndefined(this.parrafos.length)) {
-
-            } else {
-
-                this.parrafos.forEach((old_parrafo, index) => {
-
-                    if (old_parrafo.id_atractivo == atractivo.id) {
-
-                        this.parrafos.splice(index, 1);
-                    }
-                });
-            }
-
-            parrafos.forEach((parrafo, index) => {
-                parrafo.id_atractivo = atractivo.id
-
-                if (isNullOrUndefined(this.parrafos.length)) {
-
-                    parrafo.id = 0
-                } else {
-
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+                this.dataService.addImage(image);
             })
         }
 
@@ -112,29 +85,13 @@ export class AtractivosService implements OnDestroy {
 
     delAtractivo( id: number) {
 
-        this.atractivos.forEach((atractivo, index) => {
+        this.dataService.delAtractivo(id);
+        this.dataService.delParrafosAtr(id);
+        this.dataService.delImagesAtr(id);
 
-            if (atractivo.id == id) {
-
-                this.atractivos.splice(index, 1)
-            }
-        });
-
-        if (isNullOrUndefined(this.parrafos.length)) {
-
-        } else {
-            this.parrafos.forEach((parrafo, index) => {
-
-                if (parrafo.id_atractivo == id) {
-
-                    this.parrafos.splice(index, 1);
-                }
-            });
-        }
-
-    }
+    }  
 
     ngOnDestroy() {
-        this.stop.next(true);
+
     }
 }

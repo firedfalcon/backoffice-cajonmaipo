@@ -1,6 +1,6 @@
 ﻿
 export interface Atractivo {
-    id: number,
+    id: number | any,
     id_categoria: number,
     nombre: string, // Unique
     estado: string,
@@ -8,7 +8,7 @@ export interface Atractivo {
 }
 
 export interface Img {
-    id: number,
+    id: number | any,
     id_categoria: number | any,
     id_subcategoria: number | any,
     id_atractivo: number | any,

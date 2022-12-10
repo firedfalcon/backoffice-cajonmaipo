@@ -26,7 +26,6 @@ import { faInstagram, faTwitter, faWhatsapp, faYoutube } from '@fortawesome/free
 export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
 
     // Dynamic table
-    showTable: boolean = true;
     displayedColumns: string[] = [
         /*"id",*/
         "nombre", // Unique
@@ -149,13 +148,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
 
     // Image upload element events
     uploadLogo(fileInputEvent: any) {
- 
-        if (!fileInputEvent.target.files.length) {
-            this.defaultLogo();
-        } else {
-            this.logo.path = fileInputEvent.target.files[0].name;
-        }
-        
+        this.logo.path = fileInputEvent.target.files[0].name;              
     }
 
     uploadImages(fileInputEvent: any) {
@@ -164,7 +157,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
         if (images <= 6) {
             this.images = [];
             for (var i = 0; images -1; i++) {
-                if (fileInputEvent.target.files[i].name != undefined || fileInputEvent.target.files[i].name != null) {
+                if ( fileInputEvent.target.files[i].name != (undefined || null) ) {
                     this.addImage(fileInputEvent.target.files[i].name);
                 }
             }
@@ -291,7 +284,6 @@ export class editAsociado {
     // Elements helpers
     addOnBlur = true;
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
-    tabAsociados = 0;
 
     // Font awesome icons
     faWhatsapp = faWhatsapp;
@@ -309,7 +301,6 @@ export class editAsociado {
     constructor(
         public editModal: MatDialogRef<editAsociado>,
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private asociadosService: AsociadosService,
     ) {
 
         this.asociado = data.asociado;
@@ -385,13 +376,7 @@ export class editAsociado {
 
     // Image upload element events
     uploadLogo(fileInputEvent: any) {
-
-        if (!fileInputEvent.target.files.length) {
-            this.defaultLogo();
-        } else {
-            this.logo.path = fileInputEvent.target.files[0].name;
-        }
-
+        this.logo.path = fileInputEvent.target.files[0].name;        
     }
 
     uploadImages(fileInputEvent: any) {
@@ -400,7 +385,7 @@ export class editAsociado {
         if (images <= 6) {
             this.images = [];
             for (var i = 0; images - 1; i++) {
-                if (fileInputEvent.target.files[i].name != undefined || fileInputEvent.target.files[i].name != null) {
+                if ( fileInputEvent.target.files[i].name != (undefined || null) ) {
                     this.addImage(fileInputEvent.target.files[i].name);
                 }
             }
@@ -421,35 +406,6 @@ export class editAsociado {
             tipo: 'display',
             path: path
         });
-    }
-
-    // Clear/Start Asociado form
-    defaultAsociado() {
-        return {
-            id: undefined,
-            nombre: "", // Unique
-            descripcion: "",
-            facebook: "",
-            instagram: "",
-            twitter: "",
-            youtube: "",
-            whatsapp: "",
-            web: "",
-            email: "",
-            telefono: ""
-        };
-    }
-
-    defaultLogo() {
-        return {
-            id: undefined,
-            id_asociado: undefined,
-            id_atractivo: undefined,
-            id_categoria: undefined,
-            id_subcategoria: undefined,
-            tipo: 'logo',
-            path: ""
-        };
     }
 
     onNoClick(){
