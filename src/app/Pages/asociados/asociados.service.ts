@@ -35,7 +35,7 @@ export class AsociadosService implements OnDestroy {
         asociado.id = this.dataService.newAsociadoId();       
         this.dataService.addAsociado(asociado);
 
-        if (servicios.length != (null || undefined)) {
+        if (!servicios.length) {
             servicios.forEach( servicio => {
                 servicio.id_asociado = asociado.id           
                 servicio.id = this.dataService.newServicioId();
@@ -44,7 +44,7 @@ export class AsociadosService implements OnDestroy {
             })
         }
 
-        if (images.length != (null || undefined)) {
+        if (!images.length) {
             images.forEach( image => {
                 image.id_asociado = asociado.id          
                 image.id = this.dataService.newImageId();
@@ -58,19 +58,19 @@ export class AsociadosService implements OnDestroy {
 
         this.dataService.updtAsociado(asociado);
 
-        if (servicios.length != (null || undefined)){
+        if (!servicios.length){
 
             this.dataService.delServsAsoc(asociado.id);
 
             servicios.forEach( servicio => {
                 servicio.id_asociado = asociado.id
-                servicio.id = this.dataService.newServicioId;
+                servicio.id = this.dataService.newServicioId();
                 
                 this.dataService.addServicio(servicio);
             })
         }
 
-        if (images.length != (null || undefined)) {
+        if (!images.length) {
 
             this.dataService.delImagesAsoc(asociado.id);
 

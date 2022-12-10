@@ -183,7 +183,7 @@ export class DataService implements OnDestroy, OnInit{
 
     newAsociadoId() {
         var id;
-        if (this.asociados.length != (null || undefined) ){
+        if (this.asociados.length){
             id = this.asociados[this.asociados.length - 1].id + 1;
         } else {
             id = 0
@@ -304,10 +304,10 @@ export class DataService implements OnDestroy, OnInit{
     }
 
     getServsAsoc(id:number) {
-        var found = this.servicios;
-        found.forEach( (servicio,index) => {
-            if (servicio.id_asociado != id) {
-                found.splice(index, 1);
+        var found = new Array;
+        this.servicios.forEach( servicio => {
+            if (servicio.id_asociado == id) {
+                found.push(servicio);
             }
         });
         return found;
@@ -315,7 +315,7 @@ export class DataService implements OnDestroy, OnInit{
 
     newServicioId() {
         var id;
-        if (this.servicios.length != (null || undefined)) {
+        if (this.servicios.length) {
             id = this.servicios[this.servicios.length - 1].id + 1;
         } else {
             id = 0
@@ -374,10 +374,10 @@ export class DataService implements OnDestroy, OnInit{
     }
 
     getImagesAsoc(id: number) {
-        var found = this.imgs;
-        found.forEach((image, index) => {
-            if (image.id_asociado != id) {
-                found.splice(index, 1);
+        var found = new Array;
+        this.imgs.forEach( image => {
+            if (image.id_asociado == id) {
+                found.push(image);
             }
         });
         return found;
@@ -385,7 +385,7 @@ export class DataService implements OnDestroy, OnInit{
 
     newImageId() {
         var id;
-        if (this.imgs.length != (null || undefined)) {
+        if (this.imgs.length) {
             id = this.imgs[this.imgs.length - 1].id + 1;
         } else {
             id = 0

@@ -15,7 +15,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { AppComponent } from './app.component';
 import { CategoriasComponent } from './Pages/categorias/categorias.component';
 import { AtractivosComponent } from './Pages/atractivos/atractivos.component';
-import { AsociadosComponent } from './Pages/asociados/asociados.component';
+import { AsociadosComponent, editAsociado } from './Pages/asociados/asociados.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { LoginComponent} from './login/login.component';
 import { MainNavComponent } from './main-nav/main-nav.component';
@@ -42,6 +42,7 @@ export function tokenGetter() {
     LoginComponent,
     MainNavComponent,
     AdminComponent,
+    editAsociado
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

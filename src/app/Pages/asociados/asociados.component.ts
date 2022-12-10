@@ -1,30 +1,32 @@
-import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy, AfterViewInit, ViewChild} from '@angular/core';
+import { Component, Inject, ViewEncapsulation, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { Servicio, Img, Asociado } from './asociados.model';
 import { AsociadosService } from './asociados.service';
 import { DataService } from '../../services/data.service';
 
-import { Observable, timer, Subscription, Subject } from 'rxjs';
-import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent } from '@angular/material/chips';
 import { faInstagram, faTwitter, faWhatsapp, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { DataSource } from '@angular/cdk/collections';
-import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-asociados',
   templateUrl: './asociados.component.html',
   styleUrls: ['./asociados.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers:[
+        AsociadosService
+  ]
 })
 
 export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
 
     // Dynamic table
+    showTable: boolean = true;
     displayedColumns: string[] = [
         /*"id",*/
         "nombre", // Unique
@@ -40,6 +42,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
         "opciones"
     ];
     asociados = new MatTableDataSource<Asociado>();
+    private unsubscribe = new Subject(); 
 
     // Elements helpers
     addOnBlur = true;
@@ -67,15 +70,13 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
         path: ".png, .jpg, .jpeg"
     };
 
-    private unsubscribe: Subject<any> = new Subject<any>(); 
-
     constructor(
         private asociadosService: AsociadosService,
         private dataService: DataService,
         public dialog: MatDialog
     ) {
         this.asociado = this.defaultAsociado();
-        this.defaultLogo();
+        this.logo = this.defaultLogo();
     }
 
     ngOnInit() {
@@ -97,7 +98,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
     }
 
     ngOnDestroy() {
-        this.unsubscribe.next(null);
+        this.unsubscribe.next(true);
         this.unsubscribe.complete();
     }
 
@@ -199,7 +200,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
             whatsapp: "",
             web: "",
             email: "",
-            telefono: "",
+            telefono: ""
         }; 
     }
 
@@ -228,7 +229,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
             this.servs = [];
             this.tabAsociados = 1;
         } else {
-            // *Marcar errores
+            alert("Complete los campos requeridos");
         }
         
     }
@@ -237,12 +238,8 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
     Editar(id: number): void {
 
         var asociado = this.asociadosService.getAsociado(id);
-
-        var servicios = new Array;
-        // *Obtener servicios
-
-        var images = new Array;
-        // *Obtener imagenes
+        var servicios = this.asociadosService.getServsAsc(id);
+        var images = this.asociadosService.getImagesAsoc(id);
 
         const editModal = this.dialog.open(editAsociado, {
             width: '60%',
@@ -257,7 +254,12 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
         editModal.afterClosed().subscribe(result => {
 
             if (!(result == undefined)) {
-               // *Recibir data modal 
+
+                var images = new Array;
+                images = result.images;
+                images.push(result.logo);
+
+                this.asociadosService.updtAsociado(result.asociado,result.servicios,images);
                console.log('Cambios guardados ', id);
             } else {
                console.log('Cambios cancelados');
@@ -279,19 +281,178 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
     templateUrl: './edit-asociado.html',
     styleUrls: ['./asociados.component.css'],
     encapsulation: ViewEncapsulation.None,
+    providers: [
+        AsociadosService
+    ]
 })
 
 export class editAsociado {
+
+    // Elements helpers
+    addOnBlur = true;
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
+    tabAsociados = 0;
+
+    // Font awesome icons
+    faWhatsapp = faWhatsapp;
+    faInstagram = faInstagram;
+    faTwitter = faTwitter;
+    faYoutube = faYoutube;
+
+    // Asociado
+    asociado: Asociado;
+    servs: Servicio[] = []; // Saving servicios
+    images: Img[] = []; // Uploading images
+
+    logo: Img;
 
     constructor(
         public editModal: MatDialogRef<editAsociado>,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private asociadosService: AsociadosService,
     ) {
-        // *Obtener servicios e imagenes desde data
 
-        //onNoClick(): void {
-        //    this.editModal.close();
-        //}
+        this.asociado = data.asociado;
+        this.servs = data.servicios;
+
+        this.images = data.images;
+
+        this.logo = {
+            id: undefined,
+            id_asociado: undefined,
+            id_atractivo: undefined,
+            id_categoria: undefined,
+            id_subcategoria: undefined,
+            tipo: 'logo',
+            path: ""
+        };
+
+        if (this.images.length) {
+            this.images.forEach((image, index) => {
+                if (image.tipo == "logo") {
+                    this.logo = image;
+                    this.images.splice(index, 1);
+                }
+            });
+        }
+        
+    }
+
+    // Chip input servicios element events
+    addServicio(event: MatChipInputEvent): void {
+        const value = (event.value || '').trim();
+
+        // Add
+        if (value) {
+            this.servs.push({
+                id: undefined,
+                id_asociado: undefined,
+                id_categoria: undefined,
+                id_subcategoria: undefined,
+                nombre: value
+            });
+        }
+
+        // Clear the input value
+        event.chipInput!.clear();
+    }
+
+    removeServicio(servicio: Servicio): void {
+        const index = this.servs.indexOf(servicio);
+
+        if (index >= 0) {
+            this.servs.splice(index, 1);
+        }
+    }
+
+    editServicio(servicio: Servicio, event: MatChipEditedEvent) {
+        const value = event.value.trim();
+
+        // Remove if it no longer has a name
+        if (!value) {
+            this.removeServicio(servicio);
+            return;
+        }
+
+        // Edit existing 
+        const index = this.servs.indexOf(servicio);
+        if (index > 0) {
+            this.servs[index].nombre = value;
+        }
+    }
+    // Chip input servicios element events
+
+
+    // Image upload element events
+    uploadLogo(fileInputEvent: any) {
+
+        if (!fileInputEvent.target.files.length) {
+            this.defaultLogo();
+        } else {
+            this.logo.path = fileInputEvent.target.files[0].name;
+        }
+
+    }
+
+    uploadImages(fileInputEvent: any) {
+
+        var images = fileInputEvent.target.files.length;
+        if (images <= 6) {
+            this.images = [];
+            for (var i = 0; images - 1; i++) {
+                if (fileInputEvent.target.files[i].name != undefined || fileInputEvent.target.files[i].name != null) {
+                    this.addImage(fileInputEvent.target.files[i].name);
+                }
+            }
+        } else {
+            alert("Nro. Maximo de imagenes: 6");
+        }
+
+    }
+
+    addImage(path: string): void {
+
+        this.images.push({
+            id: undefined,
+            id_atractivo: undefined,
+            id_asociado: undefined,
+            id_categoria: undefined,
+            id_subcategoria: undefined,
+            tipo: 'display',
+            path: path
+        });
+    }
+
+    // Clear/Start Asociado form
+    defaultAsociado() {
+        return {
+            id: undefined,
+            nombre: "", // Unique
+            descripcion: "",
+            facebook: "",
+            instagram: "",
+            twitter: "",
+            youtube: "",
+            whatsapp: "",
+            web: "",
+            email: "",
+            telefono: ""
+        };
+    }
+
+    defaultLogo() {
+        return {
+            id: undefined,
+            id_asociado: undefined,
+            id_atractivo: undefined,
+            id_categoria: undefined,
+            id_subcategoria: undefined,
+            tipo: 'logo',
+            path: ""
+        };
+    }
+
+    onNoClick(){
+        this.editModal.close();
     }
 }

@@ -1,1 +1,216 @@
 ﻿
+<h1 mat-dialog-title>Cambiar datos asociado</h1>
+<div mat-dialog-content>
+    <form>
+
+        <div class="form-container">
+            <div class="form-block">
+                <mat-card class="infoAsociado">
+                    <mat-card-content>
+
+                        <div class="asociadoRow">
+                            <h1>Información del asociado</h1>
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>person_outline</mat-icon>
+
+                                    Nombre Asociado
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="nombre" [(ngModel)]="asociado.nombre">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>email</mat-icon>
+                                    Email
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="email" [(ngModel)]="asociado.email">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>phone</mat-icon>
+                                    Telefono
+                                </mat-label>
+                                <input type="text" matInput placeholder="+56" name="telefono" [(ngModel)]="asociado.telefono">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>
+                                        <fa-icon [icon]="faWhatsapp"></fa-icon>
+                                    </mat-icon>
+                                    Whatsapp
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="whatsapp" [(ngModel)]="asociado.whatsapp">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoField">
+                                <mat-label>
+                                    <mat-icon matPreffix>description</mat-icon>
+                                    Descripción del negocio
+                                </mat-label>
+                                <textarea type="text" matInput placeholder="Descripción" name="descripcion" [(ngModel)]="asociado.descripcion"></textarea>
+                            </mat-form-field>
+
+                        </div>
+
+                    </mat-card-content>
+
+                </mat-card>
+            </div>
+
+            <div class="form-block">
+                <mat-card class="infoAsociado">
+                    <mat-card-content>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>facebook</mat-icon>
+                                    Facebook
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="facebook" [(ngModel)]="asociado.facebook">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>
+                                        <fa-icon [icon]="faInstagram"></fa-icon>
+                                    </mat-icon>
+                                    Instagram
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="instagram" [(ngModel)]="asociado.instagram">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>
+                                        <fa-icon [icon]="faTwitter"></fa-icon>
+                                    </mat-icon>
+                                    Twitter
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="twitter" [(ngModel)]="asociado.twitter">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>
+                                        <fa-icon [icon]="faYoutube"></fa-icon>
+                                    </mat-icon>
+                                    Youtube
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="youtube" [(ngModel)]="asociado.youtube">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-label>
+                                <mat-icon matSuffix>service</mat-icon>
+                                Servicios
+                            </mat-label>
+                            <mat-form-field appearance="fill" class="asociadoField">
+
+                                <mat-chip-grid #servicios aria-label="Agregar servicio">
+                                    <mat-chip-row *ngFor="let srv of servs"
+                                                  (removed)="removeServicio(srv)"
+                                                  [editable]="true"
+                                                  (edited)="editServicio(srv, $event)">
+                                        {{srv.nombre}}
+                                        <button matChipRemove [attr.aria-label]="'borrar servicio'">
+                                            <mat-icon>cancel</mat-icon>
+                                        </button>
+                                    </mat-chip-row>
+
+                                    <input placeholder="Ingrese los servicios del negocio..."
+                                           [matChipInputFor]="servicios"
+                                           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                           [matChipInputAddOnBlur]="addOnBlur"
+                                           (matChipInputTokenEnd)="addServicio($event)" />
+                                </mat-chip-grid>
+                            </mat-form-field>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+
+            <div class="form-block">
+                <mat-card class="formImages">
+                    <mat-card-content>
+
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+
+                                <mat-label>
+                                    <mat-icon matPreffix>language</mat-icon>
+                                    Sitio web
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="web" [(ngModel)]="asociado.web">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoField">
+                                <mat-label>Subir logo</mat-label>
+                                <input type="text" matInput name="logo" [(ngModel)]="logo.path" disabled />
+                            </mat-form-field>
+                            <mat-button-field appearance="outline" class="asociadoInput">
+                                <button mat-fab (click)="logoUpload.click()" class="inputFileBtn">
+                                    <mat-icon matSuffix>insert_photo</mat-icon>
+                                </button>
+                                <input #logoUpload class="no_pointer_events" hidden type="file" (change)="uploadLogo($event)" accept=".png, .jpg, .jpeg" />
+                            </mat-button-field>
+                        </div>
+
+                        <div class="asociadoRow">
+                            <mat-label>
+                                Suba imagenes del negocio (max. 6 imagenes):
+                            </mat-label>
+                            <mat-icon>file</mat-icon>
+                            <mat-card>
+
+                                <mat-card-content>
+                                    <ul>
+                                        <li *ngFor="let image of images">
+                                            {{image.path}}
+                                        </li>
+                                    </ul>
+                                </mat-card-content>
+
+                            </mat-card>
+                            <br />
+                            <mat-button-field>
+
+                                <button mat-fab (click)="imagenes.click()" class="inputFileBtn">
+                                    <mat-icon matPreffix>insert_photo</mat-icon>
+                                </button>
+                                <input #imagenes class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImages($event)" accept=".png, .jpg, .jpeg" multiple />
+
+
+                            </mat-button-field>
+                        </div>
+
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="this.data" cdkFocusInitial>
+        Enviar cambios
+    </button>
+</div>
