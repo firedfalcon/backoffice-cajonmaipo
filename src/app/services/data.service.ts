@@ -359,6 +359,16 @@ export class DataService implements OnDestroy, OnInit{
         return this.categorias$.asObservable();
     }
 
+    getCategoria(id: number){
+        var found;
+        this.categorias.forEach(categoria => {
+            if (categoria.id == id) {
+                found = categoria;
+            }
+        });
+        return found;
+    }
+
     newCategoriaId(){
         var id;
         if (this.categorias.length){
@@ -393,6 +403,16 @@ export class DataService implements OnDestroy, OnInit{
     // CRUD Subcategoria
     getSubcategorias$(): Observable<Subcategoria[]> {
         return this.subcategorias$.asObservable();
+    }
+
+    getSubcategoria(id: number){
+        var found;
+        this.subcategorias.forEach(subcategoria => {
+            if (subcategoria.id == id) {
+                found = subcategoria;
+            }
+        });
+        return found;
     }
 
     newSubCategoriaId(){
@@ -435,6 +455,26 @@ export class DataService implements OnDestroy, OnInit{
         var found = new Array;
         this.servicios.forEach( servicio => {
             if (servicio.id_asociado == id) {
+                found.push(servicio);
+            }
+        });
+        return found;
+    }
+
+    getServsCat(id: number){
+        var found = new Array;
+        this.servicios.forEach( servicio => {
+            if (servicio.id_categoria == id) {
+                found.push(servicio);
+            }
+        });
+        return found;
+    }
+
+    getServsSubcat(id: number){
+        var found = new Array;
+        this.servicios.forEach( servicio => {
+            if (servicio.id_subcategoria == id) {
                 found.push(servicio);
             }
         });
@@ -511,6 +551,26 @@ export class DataService implements OnDestroy, OnInit{
         return found;
     }
 
+    getImagesCat(id: number){
+        var found = new Array;
+        this.imgs.forEach( image => {
+            if (image.id_categoria == id) {
+                found.push(image);
+            }
+        });
+        return found;
+    }
+
+    getImagesSubcat(id: number){
+        var found = new Array;
+        this.imgs.forEach( image => {
+            if (image.id_subcategoria == id) {
+                found.push(image);
+            }
+        });
+        return found;
+    }
+
     getImagesAtr(id: number) {
         var found = new Array;
         this.imgs.forEach( image => {
@@ -568,6 +628,24 @@ export class DataService implements OnDestroy, OnInit{
         this.imgs$.next(this.imgs);
     }
 
+    delImagesCat(id: number){
+        this.imgs.forEach((img, index) => {
+            if (img.id_categoria == id) {
+                this.imgs.splice(index, 1)
+            }
+        });
+        this.imgs$.next(this.imgs);
+    }
+
+    delImagesSubcat(id: number){
+        this.imgs.forEach((img, index) => {
+            if (img.id_subcategoria == id) {
+                this.imgs.splice(index, 1)
+            }
+        });
+        this.imgs$.next(this.imgs);
+    }
+
 
     // CRUD Parrafo
     getParrafos$(): Observable<Parrafo[]> {
@@ -578,6 +656,26 @@ export class DataService implements OnDestroy, OnInit{
         var found = new Array;
         this.parrafos.forEach( parrafo => {
             if (parrafo.id_atractivo == id) {
+                found.push(parrafo);
+            }
+        });
+        return found;
+    }
+
+    getParrafosCat(id: number){
+        var found = new Array;
+        this.parrafos.forEach( parrafo => {
+            if (parrafo.id_categoria == id) {
+                found.push(parrafo);
+            }
+        });
+        return found;
+    }
+
+    getParrafosSubcat(id: number){
+        var found = new Array;
+        this.parrafos.forEach( parrafo => {
+            if (parrafo.id_subcategoria == id) {
                 found.push(parrafo);
             }
         });
@@ -614,6 +712,7 @@ export class DataService implements OnDestroy, OnInit{
         });
         this.parrafos$.next(this.parrafos);
     }
+
     delParrafosAtr(id: number){
         this.parrafos.forEach((parrafo, index) => {
             if (parrafo.id_atractivo == id) {
@@ -623,9 +722,30 @@ export class DataService implements OnDestroy, OnInit{
         this.parrafos$.next(this.parrafos);
     }
 
+    delParrafosCat(id: number){
+        this.parrafos.forEach((parrafo, index) => {
+            if (parrafo.id_categoria == id) {
+                this.parrafos.splice(index, 1)
+            }
+        });
+        this.parrafos$.next(this.parrafos);
+    }
+
+    delParrafosSubcat(id: number){
+        this.parrafos.forEach((parrafo, index) => {
+            if (parrafo.id_subcategoria == id) {
+                this.parrafos.splice(index, 1)
+            }
+        });
+        this.parrafos$.next(this.parrafos);
+    }
+
     // CRUD Tipo_parrafo
     getTparrafos$(): Observable<Tipo_parrafo[]> {
         return this.tipos_parrafo$.asObservable();
+    }
+    getTparrafos(){
+        return this.tipos_parrafo;
     }
     addTParrafo( tparrafo: Tipo_parrafo ) {
         this.tipos_parrafo.push(tparrafo);

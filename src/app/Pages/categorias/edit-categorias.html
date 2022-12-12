@@ -1,0 +1,116 @@
+<h1 mat-dialog-title>Cambiar Categoría</h1>
+<div mat-dialog-content>
+
+    <form>
+
+        <div class="form-container">
+            <div class="form-block">
+                <mat-card>
+                    <mat-card-content>
+                        <div class="card">
+
+                            <div class="asociadoRow">
+                                <h1>Información de la Categoría</h1>
+                                <mat-form-field appearance="outline">
+                                    
+                                    <mat-label>
+                                        <mat-icon matPreffix>person_outline</mat-icon>
+                                        Nombre Categoría
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="Categoría" name="nombre" [(ngModel)]="categoria.nombre">
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <h2>Parrafo de presentación</h2>
+                                <mat-form-field appearance="outline">
+
+                                    <mat-label>
+                                        <mat-icon matPreffix>email</mat-icon>
+                                        Titulo
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="Titulo" name="titulocat" [(ngModel)]="titulocat">
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <mat-form-field appearance="outline">
+
+                                    <mat-label>
+                                        <mat-icon matPreffix>phone</mat-icon>
+                                        Subtitulo
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="+56" name="subtitulocat" [(ngModel)]="subtitulocat">
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <mat-form-field appearance="outline" class="textField">
+
+                                    <mat-label>
+                                        <mat-icon matPreffix>
+                                            <mat-icon></mat-icon>
+                                        </mat-icon>
+                                        Parrafo
+                                    </mat-label>
+                                    <textarea type="text" matInput placeholder="Asociado" name="cuerpocat" [(ngModel)]="cuerpocat"></textarea>
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <mat-label>
+                                    <mat-icon matSuffix>service</mat-icon>
+                                    <h2>Servicios</h2>
+                                </mat-label>
+                                <mat-form-field appearance="fill" class="textField">
+
+                                    <mat-chip-grid #servicioscat aria-label="Agregar servicio">
+                                        <mat-chip-row *ngFor="let srvcat of servscat"
+                                                      (removed)="removeServicioCat(srvcat)"
+                                                      [editable]="true"
+                                                      (edited)="editServicioCat(srvcat, $event)">
+                                            {{srvcat.nombre}}
+                                            <button matChipRemove [attr.aria-label]="'borrar servicio'">
+                                                <mat-icon>cancel</mat-icon>
+                                            </button>
+                                        </mat-chip-row>
+
+                                        <input placeholder="Ingrese los servicios del negocio..."
+                                               [matChipInputFor]="servicioscat"
+                                               [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                               [matChipInputAddOnBlur]="addOnBlur"
+                                               (matChipInputTokenEnd)="addServicioCat($event)" />
+                                    </mat-chip-grid>
+                                </mat-form-field>
+                            </div>
+                            <div>
+                                <mat-label>
+                                    Suba imagenes de la Categoría (max. 3 imagenes):
+                                </mat-label>
+                                <mat-list>
+                                    <mat-list-item *ngFor="let imagecat of imagescat">
+                                        {{imagecat.path}}
+                                    </mat-list-item>
+                                </mat-list>
+                                
+                                <br />
+                                <mat-button-field>
+                                    
+                                    <button mat-fab (click)="imagenescat.click()" class="inputFileBtn">
+                                        <mat-icon matPreffix>insert_photo</mat-icon>
+                                    </button>
+                                    <input #imagenescat class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImagesCat($event)" accept=".png, .jpg, .jpeg" multiple />
+                                    
+                                    
+                                </mat-button-field>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </form>
+
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="this.data" cdkFocusInitial>
+        Enviar cambios
+    </button>
+</div>

@@ -1,0 +1,97 @@
+<h1 mat-dialog-title>Cambiar datos asociado</h1>
+<div mat-dialog-content>
+
+    <form>
+
+        <div class="form-container">
+            <div class="form-block">
+                <mat-card class="infoAsociado">
+                    <mat-card-content>
+                        <div class="asociadoRow">
+                            <h1>Información del Atractivo Turístico</h1>
+                            <mat-form-field appearance="outline" class="asociadoInput">
+                                
+                                <mat-label>
+                                    <mat-icon matPreffix>person_outline</mat-icon>
+
+                                    Nombre
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="nombre" [(ngModel)]="atractivo.nombre">
+                            </mat-form-field>
+                        </div>
+                        <div class="asociadoRow">
+                            <mat-form-field appearance="outline" class="asociadoInput">
+                                <mat-label>
+                                    <mat-icon matPreffix>email</mat-icon>
+                                    Ubicación
+                                </mat-label>
+                                <input type="text" matInput placeholder="Asociado" name="ubicacion" [(ngModel)]="atractivo.ubicacion">
+                            </mat-form-field>
+                        </div>
+                        <div *ngFor="let parrafo of parrafos; let i = index;">
+                            <div class="asociadoRow">
+                                <h2>{{capsFirstLetter(tparrafos[i].nombre)}}</h2>
+                                <mat-form-field appearance="outline">
+                                    <mat-label>
+                                        <mat-icon matPreffix></mat-icon>
+                                        Titulo
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="Titulo" name="'titulo'+i" [(ngModel)]='parrafo.titulo'>
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <mat-form-field appearance="outline" class="textField">
+                                    <mat-label>
+                                        <mat-icon matPreffix>
+                                            <mat-icon></mat-icon>
+                                        </mat-icon>
+                                        Parrafo
+                                    </mat-label>
+                                    <textarea type="text" matInput placeholder="Asociado" name="'cuerpo'+i" [(ngModel)]='parrafo.cuerpo'></textarea>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+            <div class="form-block">
+                <mat-card class="infoAsociado">
+                    <mat-card-content>
+                        
+                        <div class="asociadosRow">
+                            <mat-checkbox checked="estado"><h2>Abierto al público</h2>
+                            </mat-checkbox>
+                        </div>
+                        <div>
+                            <mat-label>
+                                Suba imagenes del Atractivo (max. 8 imagenes):
+                            </mat-label>
+                            <br/>
+                            <mat-card *ngIf="images.length">
+                                <mat-list>
+                                    <mat-list-item *ngFor="let image of images">
+                                        {{image.path}}
+                                    </mat-list-item>
+                                </mat-list> 
+                            </mat-card>
+                            <mat-button-field>
+                                <button mat-fab (click)="imagenescat.click()" class="inputFileBtn">
+                                    <mat-icon matPreffix>insert_photo</mat-icon>
+                                </button>
+                                <input #imagenescat class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImages($event)" accept=".png, .jpg, .jpeg" multiple />
+                            </mat-button-field>
+                            <br/>
+                                                   
+                        </div>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </div>
+    </form>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancelar</button>
+    <button mat-button [mat-dialog-close]="this.data" cdkFocusInitial>
+        Enviar cambios
+    </button>
+</div>

@@ -273,10 +273,7 @@ export class AsociadosComponent implements OnInit, OnDestroy, AfterViewInit{
     selector: 'edit-asociado',
     templateUrl: './edit-asociado.html',
     styleUrls: ['./asociados.component.css'],
-    encapsulation: ViewEncapsulation.None,
-    providers: [
-        AsociadosService
-    ]
+    encapsulation: ViewEncapsulation.None
 })
 
 export class editAsociado {
@@ -300,12 +297,11 @@ export class editAsociado {
 
     constructor(
         public editModal: MatDialogRef<editAsociado>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: any
     ) {
 
         this.asociado = data.asociado;
         this.servs = data.servicios;
-
         this.images = data.images;
 
         this.logo = {

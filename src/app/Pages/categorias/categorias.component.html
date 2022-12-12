@@ -1,1 +1,300 @@
-<p>categorias works!</p>
+<mat-tab-group class="asociados" [(selectedIndex)]="tabCategorias" mat-stretch-tabs="false" mat-align-tabs="start">
+
+    <mat-tab label="Registrar Categoría" #RegistrarCategorias>
+        <form>
+
+            <div class="form-container">
+                <div class="form-block">
+                    <mat-card>
+                        <mat-card-content>
+                            <div class="card">
+
+                                <div class="asociadoRow">
+                                    <h1>Información de la Categoría</h1>
+                                    <mat-form-field appearance="outline">
+                                        
+                                        <mat-label>
+                                            <mat-icon matPreffix>person_outline</mat-icon>
+                                            Nombre Categoría
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="Categoría" name="nombre" [(ngModel)]="categoria.nombre">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <h2>Parrafo de presentación</h2>
+                                    <mat-form-field appearance="outline">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>email</mat-icon>
+                                            Titulo
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="Titulo" name="titulocat" [(ngModel)]="titulocat">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-form-field appearance="outline">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>phone</mat-icon>
+                                            Subtitulo
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="+56" name="subtitulocat" [(ngModel)]="subtitulocat">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-form-field appearance="outline" class="textField">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>
+                                                <mat-icon></mat-icon>
+                                            </mat-icon>
+                                            Parrafo
+                                        </mat-label>
+                                        <textarea type="text" matInput placeholder="Asociado" name="cuerpocat" [(ngModel)]="cuerpocat"></textarea>
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-label>
+                                        <mat-icon matSuffix>service</mat-icon>
+                                        <h2>Servicios</h2>
+                                    </mat-label>
+                                    <mat-form-field appearance="fill" class="textField">
+    
+                                        <mat-chip-grid #servicioscat aria-label="Agregar servicio">
+                                            <mat-chip-row *ngFor="let srvcat of servscat"
+                                                          (removed)="removeServicioCat(srvcat)"
+                                                          [editable]="true"
+                                                          (edited)="editServicioCat(srvcat, $event)">
+                                                {{srvcat.nombre}}
+                                                <button matChipRemove [attr.aria-label]="'borrar servicio'">
+                                                    <mat-icon>cancel</mat-icon>
+                                                </button>
+                                            </mat-chip-row>
+    
+                                            <input placeholder="Ingrese los servicios del negocio..."
+                                                   [matChipInputFor]="servicioscat"
+                                                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                                   [matChipInputAddOnBlur]="addOnBlur"
+                                                   (matChipInputTokenEnd)="addServicioCat($event)" />
+                                        </mat-chip-grid>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-label>
+                                        Suba imagenes de la Categoría (max. 3 imagenes):
+                                    </mat-label>
+                                    <br/>
+                                    <mat-button-field>
+                                        <button mat-fab (click)="imagenescat.click()" class="inputFileBtn">
+                                            <mat-icon matPreffix>insert_photo</mat-icon>
+                                        </button>
+                                        <input #imagenescat class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImagesCat($event)" accept=".png, .jpg, .jpeg" multiple />
+                                    </mat-button-field>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let imagecat of imagescat">
+                                            {{imagecat.path}}
+                                        </mat-list-item>
+                                    </mat-list>
+                                    
+                                </div>
+                                <div class="btnSubmit">
+                                    <button mat-raised-button (click)="SubmitCat()" color="warn">
+                                        <mat-icon matPreffix>save</mat-icon>Registrar Categoría
+                                    </button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="form-block">
+                    <mat-card>
+                        <mat-card-content>
+                            <div class="card justify-center">
+                                <table class="table" #Categorías>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><h1>Categoría</h1></th>
+                                            <th scope="col"><h1>Opciones</h1></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let categoria of categorias">   
+                                            <td>
+                                                <mat-card>
+                                                    <mat-card-content>
+                                                        {{categoria.nombre}}
+                                                    </mat-card-content>                                                   
+                                                </mat-card>
+
+                                            </td>
+                                            <td>
+                                                <button matTooltip="Cambiar" mat-raised-button (click)="EditarCat(categoria.id)">
+                                                    <mat-icon>edit</mat-icon>
+                                                </button>
+                                                <button matTooltip="Eliminar" mat-raised-button (click)="BorrarCat(categoria.id)">
+                                                    <mat-icon>cancel</mat-icon>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    
+                                </table>
+                            </div>
+                                
+
+                        </mat-card-content>
+                    </mat-card>
+
+                </div>
+            </div>
+        </form>
+    </mat-tab>
+
+    <mat-tab label="Registrar Subcategoría" #RegistrarSubcategorias>
+        <form>
+
+            <div class="form-container">
+                <div class="form-block">
+                    <mat-card>
+                        <mat-card-content>
+                            <div class="card">
+
+                                <div class="asociadoRow">
+                                    <h1>Información de la Subcategoría</h1>
+                                    <mat-form-field appearance="outline">
+                                        
+                                        <mat-label>
+                                            <mat-icon matPreffix>person_outline</mat-icon>
+                                            Nombre Subcategoría
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="Categoría" name="nombre" [(ngModel)]="subcategoria.nombre">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <h2>Parrafo de presentación</h2>
+                                    <mat-form-field appearance="outline">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>email</mat-icon>
+                                            Titulo
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="Titulo" name="titulocat" [(ngModel)]="titulosubcat">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-form-field appearance="outline">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>phone</mat-icon>
+                                            Subtitulo
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="+56" name="subtitulocat" [(ngModel)]="subtitulosubcat">
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-form-field appearance="outline" class="textField">
+    
+                                        <mat-label>
+                                            <mat-icon matPreffix>
+                                                <mat-icon></mat-icon>
+                                            </mat-icon>
+                                            Parrafo
+                                        </mat-label>
+                                        <textarea type="text" matInput placeholder="Asociado" name="cuerpocat" [(ngModel)]="cuerposubcat"></textarea>
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-label>
+                                        <mat-icon matSuffix>service</mat-icon>
+                                        <h2>Servicios</h2>
+                                    </mat-label>
+                                    <mat-form-field appearance="fill" class="textField">
+    
+                                        <mat-chip-grid #serviciossubcat aria-label="Agregar servicio">
+                                            <mat-chip-row *ngFor="let srvsubcat of servssubcat"
+                                                          (removed)="removeServicioSubcat(srvsubcat)"
+                                                          [editable]="true"
+                                                          (edited)="editServicioSubcat(srvsubcat, $event)">
+                                                {{srvsubcat.nombre}}
+                                                <button matChipRemove [attr.aria-label]="'borrar servicio'">
+                                                    <mat-icon>cancel</mat-icon>
+                                                </button>
+                                            </mat-chip-row>
+    
+                                            <input placeholder="Ingrese los servicios del negocio..."
+                                                   [matChipInputFor]="serviciossubcat"
+                                                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                                   [matChipInputAddOnBlur]="addOnBlur"
+                                                   (matChipInputTokenEnd)="addServicioSubcat($event)" />
+                                        </mat-chip-grid>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-label>
+                                        Suba imagenes de la Categoría (max. 3 imagenes):
+                                    </mat-label>
+                                    <br />
+                                    <mat-button-field>
+                                        <button mat-fab (click)="imagenessubcat.click()" class="inputFileBtn">
+                                            <mat-icon matPreffix>insert_photo</mat-icon>
+                                        </button>
+                                        <input #imagenessubcat class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImagesSubcat($event)" accept=".png, .jpg, .jpeg" multiple />
+                                    </mat-button-field>
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let imagesubcat of imagessubcat">
+                                            {{imagesubcat.path}}
+                                        </mat-list-item>
+                                    </mat-list>
+                                </div>
+                                <div class="btnSubmit">
+                                    <button mat-raised-button (click)="SubmitSubcat()" color="warn">
+                                        <mat-icon matPreffix>save</mat-icon>Registrar Subcategoría
+                                    </button>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="form-block">
+                    <mat-card>
+                        <mat-card-content>
+                            <div class="card justify-center">
+                                <table class="table" #Categorías>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col"><h1>Subcategoría</h1></th>
+                                            <th scope="col"><h1>Opciones</h1></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let subcategoria of subcategorias">   
+                                            <td>
+                                                <mat-card>
+                                                    <mat-card-content>
+                                                        {{subcategoria.nombre}}
+                                                    </mat-card-content>
+                                                </mat-card>
+
+                                            </td>
+                                            <td>
+                                                <button matTooltip="Cambiar" mat-raised-button (click)="EditarSubcat(subcategoria.id)">
+                                                    <mat-icon>edit</mat-icon>
+                                                </button>
+                                                <button matTooltip="Eliminar" mat-raised-button (click)="BorrarSubcat(subcategoria.id)">
+                                                    <mat-icon>cancel</mat-icon>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    
+                                </table>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+            
+        </form>
+    </mat-tab>
+
+</mat-tab-group>

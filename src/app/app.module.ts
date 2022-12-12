@@ -13,8 +13,8 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 // Components
 import { AppComponent } from './app.component';
-import { CategoriasComponent } from './Pages/categorias/categorias.component';
-import { AtractivosComponent } from './Pages/atractivos/atractivos.component';
+import { CategoriasComponent, editCategoria, editSubcategoria } from './Pages/categorias/categorias.component';
+import { AtractivosComponent, editAtractivo } from './Pages/atractivos/atractivos.component';
 import { AsociadosComponent, editAsociado } from './Pages/asociados/asociados.component';
 import { DashboardComponent } from './Pages/dashboard/dashboard.component';
 import { LoginComponent} from './login/login.component';
@@ -36,13 +36,17 @@ export function tokenGetter() {
   declarations: [
     AppComponent,
     CategoriasComponent,
+    editCategoria,
+    editSubcategoria,
     AtractivosComponent,
+    editAtractivo,
     AsociadosComponent,
+    editAsociado,
     DashboardComponent,
     LoginComponent,
     MainNavComponent,
     AdminComponent,
-    editAsociado
+    
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'serverApp' }),

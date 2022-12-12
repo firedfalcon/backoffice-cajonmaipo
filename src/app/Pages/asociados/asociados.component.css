@@ -1,7 +1,7 @@
 
-.asociadoField {
+.textField {
     width: 90%;
-    height: 70%;
+    min-height: 70%;
 }
 
 .asociadoInput {
@@ -14,10 +14,19 @@
     padding-bottom: 2.5%;
 }
 
-.asociadoSubmit {
+.btnSubmit {
     padding-left: 25%;
     
 }
+
+.infoAsociado {
+    min-height: 100%;
+}
+
+.asociados {
+    padding:2%;
+}
+
 
 .form-container {
     display: flex;
@@ -38,22 +47,10 @@
     min-height: 100%;
 }
 
-.infoAsociado {
-    min-height: 100%;
-}
-
-.asociados {
-    padding:2%;
-}
+#table {
+    width: 100%;
+} 
 
 .no_pointer_events {
     pointer-events:none;
 }
-
-.inputFileBtn {
-    background-color:cadetblue;
-}
-
-#table {
-    width: 100%;
-} 

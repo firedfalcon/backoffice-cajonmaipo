@@ -1,1 +1,164 @@
 
+<mat-tab-group class="asociados" [(selectedIndex)]="tabAtractivos" mat-stretch-tabs="false" mat-align-tabs="start">
+
+    <mat-tab label="Registrar Atractivo" #RegistrarAtractivo>
+
+        <form>
+
+            <div class="form-container">
+                <div class="form-block">
+                    <mat-card class="infoAsociado">
+                        <mat-card-content>
+                            <div class="asociadoRow">
+                                <h1>Información del Atractivo Turístico</h1>
+                                <mat-form-field appearance="outline" class="asociadoInput">
+                                    
+                                    <mat-label>
+                                        <mat-icon matPreffix>person_outline</mat-icon>
+
+                                        Nombre
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="Asociado" name="nombre" [(ngModel)]="atractivo.nombre">
+                                </mat-form-field>
+                            </div>
+                            <div class="asociadoRow">
+                                <mat-form-field appearance="outline" class="asociadoInput">
+                                    <mat-label>
+                                        <mat-icon matPreffix>email</mat-icon>
+                                        Ubicación
+                                    </mat-label>
+                                    <input type="text" matInput placeholder="Asociado" name="ubicacion" [(ngModel)]="atractivo.ubicacion">
+                                </mat-form-field>
+                            </div>
+                            <div *ngFor="let parrafo of parrafos; let i = index;">
+                                <div class="asociadoRow">
+                                    <h2>{{capsFirstLetter(tparrafos[i].nombre)}}</h2>
+                                    <mat-form-field appearance="outline">
+                                        <mat-label>
+                                            <mat-icon matPreffix></mat-icon>
+                                            Titulo
+                                        </mat-label>
+                                        <input type="text" matInput placeholder="Titulo" name="'titulo'+i" [(ngModel)]='parrafo.titulo'>
+                                    </mat-form-field>
+                                </div>
+                                <div class="asociadoRow">
+                                    <mat-form-field appearance="outline" class="textField">
+                                        <mat-label>
+                                            <mat-icon matPreffix>
+                                                <mat-icon></mat-icon>
+                                            </mat-icon>
+                                            Parrafo
+                                        </mat-label>
+                                        <textarea type="text" matInput placeholder="Asociado" name="'cuerpo'+i" [(ngModel)]='parrafo.cuerpo'></textarea>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+                <div class="form-block">
+                    <mat-card class="infoAsociado">
+                        <mat-card-content>
+                            
+                            <div class="asociadosRow">
+                                <mat-checkbox checked="estado"><h2>Abierto al público</h2>
+                                </mat-checkbox>
+                            </div>
+                            <div>
+                                <mat-label>
+                                    Suba imagenes del Atractivo (max. 8 imagenes):
+                                </mat-label>
+                                <br/>
+                                <mat-card *ngIf="images.length">
+                                    <mat-list>
+                                        <mat-list-item *ngFor="let image of images">
+                                            {{image.path}}
+                                        </mat-list-item>
+                                    </mat-list> 
+                                </mat-card>
+                                <mat-button-field>
+                                    <button mat-fab (click)="imagenescat.click()" class="inputFileBtn">
+                                        <mat-icon matPreffix>insert_photo</mat-icon>
+                                    </button>
+                                    <input #imagenescat class="no_pointer_events" hidden type="file" onclick="this.value=null" (change)="uploadImages($event)" accept=".png, .jpg, .jpeg" multiple />
+                                </mat-button-field>
+                                <br/>
+                                                       
+                            </div>
+                            <br/>
+                            <div class="btnSubmit">
+                                <button mat-raised-button (click)="Submit()" color="warn">
+                                    <mat-icon matPreffix>save</mat-icon>Registrar Asociado
+                                </button>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+        </form>
+
+    </mat-tab>
+
+
+    <mat-tab label="Atractivos">
+
+        <mat-card>
+            <mat-card-content>
+
+                <div [hidden]="atractivos.data.length">
+                    <mat-card>
+                        <mat-card-content>
+                            <h1>No tienes asociados registrados</h1>
+                        </mat-card-content>
+ 
+                    </mat-card>                    
+                </div>
+
+                <table [hidden]="!atractivos.data.length" #table mat-table [dataSource]="atractivos" matSort class="mat-elevation-z8">
+
+                    <ng-container matColumnDef="nombre">
+                        <tr>
+                            <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                            <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-container matColumnDef="estado">
+                        <tr>
+                            <th mat-header-cell *matHeaderCellDef> Estado </th>
+                            <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-container matColumnDef="ubicacion">
+                        <tr>
+                            <th mat-header-cell *matHeaderCellDef> Ubicacion </th>
+                            <td mat-cell *matCellDef="let element"> {{element.ubicacion}} </td>
+                        </tr>
+                    </ng-container>
+                    
+                    <ng-container matColumnDef="opciones">
+                        <tr>
+                            <th mat-header-cell *matHeaderCellDef>Opciones</th>
+                            <td mat-cell *matCellDef="let element; let i = index">
+
+                                <button matTooltip="Cambiar" mat-raised-button (click)="Editar(element.id)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button matTooltip="Eliminar" mat-raised-button (click)="Borrar(element.id)">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+
+            </mat-card-content>
+        </mat-card>
+    </mat-tab>
+
+</mat-tab-group>

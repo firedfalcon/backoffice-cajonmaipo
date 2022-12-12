@@ -35,7 +35,7 @@ export class AtractivosService implements OnDestroy {
         atractivo.id = this.dataService.newAtractivoId();
         this.dataService.addAtractivo(atractivo);
 
-        if(!parrafos.length){
+        if(parrafos.length){
 
             parrafos.forEach( parrafo => {             
                 parrafo.id_atractivo = atractivo.id
@@ -44,7 +44,7 @@ export class AtractivosService implements OnDestroy {
             });
         }
 
-        if(!images.length){
+        if(images.length){
 
             images.forEach( image => {             
                 image.id_atractivo = atractivo.id
@@ -59,7 +59,7 @@ export class AtractivosService implements OnDestroy {
 
         this.dataService.updtAtractivo(atractivo);
 
-        if (!parrafos.length) {
+        if (parrafos.length) {
             this.dataService.delParrafosAtr(atractivo.id);
 
             parrafos.forEach( parrafo => {
@@ -70,7 +70,7 @@ export class AtractivosService implements OnDestroy {
             })
         }
 
-        if (!images.length) {
+        if (images.length) {
             this.dataService.delImagesAtr(atractivo.id);
 
             images.forEach( image => {

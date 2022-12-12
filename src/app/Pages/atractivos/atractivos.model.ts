@@ -18,7 +18,7 @@ export interface Img {
 }
 
 export interface Parrafo {
-    id: number,
+    id: number | any,
     id_atractivo: number | any,
     id_categoria: number | any,
     id_subcategoria: number | any,

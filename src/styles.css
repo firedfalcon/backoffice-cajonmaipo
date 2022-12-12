@@ -13,6 +13,31 @@
     border-radius: 10px;
 }
 
+.card{
+    padding: 5%;
+}
+
+td, th {
+    border: 2px solid #c3c3c3;
+    text-align: center;
+    padding: 8px;
+  }
+
+td{
+    background-color: #e6f2f2;
+}
+th{
+    background-color: #e4f876;
+}
+
+.table{
+    min-width:50%;
+}
+
+.inputFileBtn {
+    background-color:cadetblue;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 

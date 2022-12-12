@@ -26,7 +26,8 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
     // "id_categoria",
     "nombre", // Unique
     "estado",
-    "ubicacion" // Unique
+    "ubicacion", // Unique
+    "opciones"
   ];
   atractivos = new MatTableDataSource<Atractivo>();
   private unsubscribe = new Subject(); 
@@ -36,8 +37,10 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
 
   // Atractivo
   atractivo: Atractivo;
+  estado: boolean = true;
   parrafos: Parrafo[] = []; // Saving servicios
   images: Img[] = []; // Uploading images
+  tparrafos: Tipo_parrafo[]= [];
 
   constructor(
     private atractivosService: AtractivosService,
@@ -45,6 +48,9 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
     public dialog: MatDialog
   ){  
     this.atractivo = this.defaultAtractivo();
+    this.tparrafos = this.dataService.getTparrafos();
+    this.tparrafos.splice(0,1);
+    this.parrafos=  this.defaultParrafos();
   } 
 
   ngOnInit(): void {
@@ -70,20 +76,23 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
     this.unsubscribe.complete();
   }
 
+  capsFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
   uploadImages(fileInputEvent: any) {
 
     var images = fileInputEvent.target.files.length;
-    if (images <= 6) {
+    if (this.images.length <= 3) {
         this.images = [];
-        for (var i = 0; images -1; i++) {
-            if ( fileInputEvent.target.files[i].name != (undefined || null) ) {
+        for (var i = 0; images; i++) {
+            if ( fileInputEvent.target.files[i].name != (undefined || null || "") ) {
                 this.addImage(fileInputEvent.target.files[i].name);
             }
         }
     } else {
-            alert("Nro. Maximo de imagenes: 6");
+            alert("Nro. Maximo de imagenes: 3");
     }
-
   }
 
   addImage(path: string): void {
@@ -110,19 +119,43 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
     }; 
   }
 
+  defaultParrafos(){
+    var parrafos = new Array;
+    this.tparrafos.forEach(tparrafo =>{
+      parrafos.push(
+        {
+          id: undefined,
+          id_atractivo: undefined,
+          id_categoria: undefined,
+          id_subcategoria: undefined,
+          id_tipo_parrafo: tparrafo.id,
+          titulo: "",
+          subtitulo: "",
+          cuerpo: ""
+        });
+    });
+    return parrafos;
+  }
+
   Submit() {
     if ( 
       (this.atractivo.nombre    != (undefined || null || "") ) ||
       (this.atractivo.ubicacion != (undefined || null || "") )
     ) {
-        this.atractivosService.newAtractivo(this.atractivo, this.parrafos, this.images);
 
-        this.atractivo = this.defaultAtractivo();
-        this.images = [];
-        this.parrafos = [];
-        this.tabAtractivos = 1;
+      if(this.estado){
+        this.atractivo.estado = "abierto";
+      }else{
+        this.atractivo.estado = "cerrado";
+      }
+      this.atractivosService.newAtractivo(this.atractivo, this.parrafos, this.images);
+
+      this.atractivo = this.defaultAtractivo();
+      this.images = [];
+      this.parrafos = [];
+      this.tabAtractivos = 1;
     } else {
-        alert("Complete los campos requeridos");
+      alert("Complete los campos requeridos");
     }
 
   }
@@ -130,16 +163,18 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
   // Modal Editar
   Editar(id: number): void {
 
-    var asociado = this.atractivosService.getAtractivo(id);
+    var atractivo = this.atractivosService.getAtractivo(id);
     var parrafos = this.atractivosService.getParrafosAtr(id);
     var images = this.atractivosService.getImagesAtr(id);
+    var tparrafos = this.tparrafos;
 
     const editModal = this.dialog.open(editAtractivo, {
         width: '60%',
         data: {
-            asociado: asociado,
-            parrafos: parrafos,
-            images: images                
+          atractivo: atractivo,
+          parrafos: parrafos,
+          images: images,
+          tparrafos: tparrafos                
         },
 
     });
@@ -148,7 +183,7 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
 
         if (!(result == undefined)) {
 
-            this.atractivosService.updtAtractivo(result.asociado,result.parrafos,result.images);
+          this.atractivosService.updtAtractivo(result.atractivo,result.parrafos,result.images);
            console.log('Cambios guardados ', id);
         } else {
            console.log('Cambios cancelados');
@@ -170,33 +205,57 @@ export class AtractivosComponent implements OnInit, OnDestroy, AfterViewInit{
   selector: 'edit-atractivo',
   templateUrl: './edit-atractivo.html',
   styleUrls: ['./atractivos.component.css'],
-  encapsulation: ViewEncapsulation.None,
-  providers:[
-        AtractivosComponent
-  ]
+  encapsulation: ViewEncapsulation.None
 })
 export class editAtractivo{
 
   // Atractivo
   atractivo: Atractivo;
+  estado: boolean = true;
   parrafos: Parrafo[] = []; // Saving servicios
+  auxparrafos: Parrafo[]= [];
   images: Img[] = []; // Uploading images
+  tparrafos: Tipo_parrafo[]= [];
 
   constructor(
     public editModal: MatDialogRef<editAtractivo>,
+    private dataService: DataService,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {
 
     this.atractivo = data.atractivo;
     this.parrafos = data.parrafos;
-    this.images = data.images;
+    this.images = data.images;    
+    this.tparrafos = data.tparrafos;
+    this.auxparrafos = this.defaultParrafos();
+    console.log(this.parrafos);
+    console.log(this.auxparrafos);
+    // this.auxparrafos.forEach( aux =>{
+    //   for(var i=0 ; this.parrafos.length-1; i++){
+    //     if(aux.id_tipo_parrafo == this.parrafos[i].id_tipo_parrafo){
+    //       aux = this.parrafos[i];
+    //     }
+    //   }
+    // });
+    // this.parrafos= this.auxparrafos;
 
+    console.log(this.parrafos);
+    if(this.atractivo.estado == "abierto"){
+      this.estado = true;
+    }else{
+      this.estado = false;
+    }
+
+  }
+
+  capsFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
   }
 
   uploadImages(fileInputEvent: any) {
 
     var images = fileInputEvent.target.files.length;
-    if (images <= 6) {
+    if (images <= 8) {
         this.images = [];
         for (var i = 0; images -1; i++) {
             if ( fileInputEvent.target.files[i].name != (undefined || null) ) {
@@ -220,6 +279,28 @@ export class editAtractivo{
           tipo: 'display',
           path: path
       });
+  }
+
+  defaultParrafos(){
+    var parrafos = new Array;
+    this.tparrafos.forEach(tparrafo =>{
+      parrafos.push(
+        {
+          id: undefined,
+          id_atractivo: undefined,
+          id_categoria: undefined,
+          id_subcategoria: undefined,
+          id_tipo_parrafo: tparrafo.id,
+          titulo: "",
+          subtitulo: "",
+          cuerpo: ""
+        });
+    });
+    return parrafos;
+  }
+
+  onNoClick(){
+    this.editModal.close();
   }
 
 }

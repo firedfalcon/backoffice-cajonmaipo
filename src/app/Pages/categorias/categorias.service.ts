@@ -1,171 +1,130 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Categoria, Subcategoria, Parrafo, Servicio } from './categorias.model';
+import { Categoria, Subcategoria, Parrafo, Servicio, Img } from './categorias.model';
+import { DataService } from '../../services/data.service';
 
 import { HttpClient } from '@angular/common/http';
 import { Observable, timer, Subscription, Subject } from 'rxjs';
 import { switchMap, tap, share, retry, takeUntil } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriasService implements OnDestroy {
 
-    private categorias: Categoria[] = [];
-    //private categorias$ = new Subject<Categoria[]>();
-    //private o_categorias$: Observable<Categoria[]>;
-
-    private subcategorias: Subcategoria[] = [];
-    //private subcategorias$ = new Subject<Subcategoria[]>();
-    //private o_subcategorias$: Observable<Subcategoria[]>;
-
-    private parrafos: Parrafo[] = [];
-    //private parrafos$ = new Subject<Parrafo[]>();
-    //private o_parrafos$: Observable<Parrafo[]>;
-
-    private servicios: Servicio[] = [];
-    //private servicios$ = new Subject<Servicio[]>();
-    //private o_servicios$: Observable<Servicio[]>;
-
-    private stop = new Subject();
-
     constructor(
-        private http: HttpClient
+        private http: HttpClient,
+        private dataService: DataService
     ) {
-        this.categorias = [];
-        this.subcategorias = [];
-        this.parrafos = [];
-        this.servicios = [];
+
     }
 
-    getCategorias() {
-        return this.categorias;
+    getCategoria(id: number) {
+        return this.dataService.getCategoria(id);
     }
 
-    getSubcategorias() {
-        return this.subcategorias;
+    getSubcategoria(id: number) {
+        return this.dataService.getSubcategoria(id);
     }
 
-    getParrafos() {
-        return this.parrafos;
+    getParrafosCat(id: number) {
+        return this.dataService.getParrafosCat(id);
     }
 
-    getServicios() {
-        return this.servicios;
+    getParrafosSubcat(id: number) {
+        return this.dataService.getParrafosSubcat(id);
     }
 
-    newCategoria( categoria: Categoria, parrafos: Parrafo[], servicios: Servicio[] ) {
+    getServiciosCat(id: number) {
+        return this.dataService.getServsCat(id);
+    }
 
-        if (isNullOrUndefined(this.categorias.length)) {
+    getServiciosSubcat(id: number) {
+        return this.dataService.getServsSubcat(id);
+    }
 
-            categoria.id = 0;
-        } else {
+    getImagesCat(id:number){
+        return this.dataService.getImagesCat(id);
+    }
 
-            categoria.id = this.categorias[this.categorias.length - 1].id + 1;
-        }
-        this.categorias.push(categoria);
+    getImagesSubcat(id: number){
+        return this.dataService.getImagesSubcat(id);
+    }
 
-        if (isNullOrUndefined(parrafos.length)) {
+    newCategoria( categoria: Categoria, parrafos: Parrafo[], servicios: Servicio[], images: Img[] ) {
 
-        } else {
+        categoria.id = this.dataService.newCategoriaId();
+ 
+        this.dataService.addCategoria(categoria);
 
-            parrafos.forEach((parrafo, index) => {
+        if (parrafos.length) {
+
+            parrafos.forEach( parrafo => {
                 parrafo.id_categoria = categoria.id
+                parrafo.id = this.dataService.newParrafoId();
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    parrafo.id = 0
-                } else {
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+                this.dataService.addParrafo(parrafo);
             })
         }
 
-        if (isNullOrUndefined(servicios.length)) {
+        if (servicios.length) {
 
-        } else {
-
-            servicios.forEach((servicio, index) => {
+            servicios.forEach( servicio => {
                 servicio.id_categoria = categoria.id
+                servicio.id = this.dataService.newServicioId();
+                
+                this.dataService.addServicio(servicio);
+            })
+        }
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    servicio.id = 0
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
-                this.servicios.push(servicio);
+        if (images.length) {
+
+            images.forEach( image => {
+                image.id_categoria = categoria.id
+                image.id = this.dataService.newServicioId();
+                
+                this.dataService.addImage(image);
             })
         }
 
     }
 
-    updtCategoria( categoria: Categoria, parrafos: Parrafo[], servicios: Servicio[] ) {
+    updtCategoria( categoria: Categoria, parrafos: Parrafo[], servicios: Servicio[], images: Img[] ) {
 
-        this.categorias.forEach((old_categoria, index) => {
+        this.dataService.updtCategoria(categoria);
 
-            if (old_categoria.id == categoria.id) {
+        if (parrafos.length) {
 
-                this.categorias[index] = categoria
-            }
-        });
+            this.dataService.delParrafosCat(categoria.id);
 
-        if (isNullOrUndefined(parrafos.length)) {
-
-        } else {
-
-            if (isNullOrUndefined(this.parrafos.length)) {
-
-            } else {
-
-                this.parrafos.forEach((old_parrafo, index) => {
-
-                    if (old_parrafo.id_categoria == categoria.id) {
-
-                        this.parrafos.splice(index, 1);
-                    }
-                });
-            }
-
-            parrafos.forEach((parrafo, index) => {
+            parrafos.forEach( parrafo => {
                 parrafo.id_categoria = categoria.id
-
-                if (isNullOrUndefined(this.parrafos.length)) {
-
-                    parrafo.id = 0
-                } else {
-
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+                parrafo.id = this.dataService.newParrafoId();
+                
+                this.dataService.addParrafo(parrafo);
             })
         }
 
-        if (isNullOrUndefined(servicios.length)) {
+        if (servicios.length) {
 
-        } else {
+            this.dataService.delServCat(categoria.id);
 
-            if (isNullOrUndefined(this.servicios.length)) {
-
-            } else {
-
-                this.servicios.forEach((old_servicio, index) => {
-
-                    if (old_servicio.id_categoria == categoria.id) {
-
-                        this.servicios.splice(index, 1);
-                    }
-                });
-            }
-
-            servicios.forEach((servicio, index) => {
+            servicios.forEach( servicio => {
                 servicio.id_categoria = categoria.id
+                servicio.id = this.dataService.newServicioId();
+                
+                this.dataService.addServicio(servicio);
+            })
+        }
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    servicio.id = 0;
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
-                this.servicios.push(servicio);
+        if (images.length) {
+
+            this.dataService.delServCat(categoria.id);
+
+            images.forEach( image => {
+                image.id_categoria = categoria.id
+                image.id = this.dataService.newImageId();
+                
+                this.dataService.addImage(image);
             })
         }
 
@@ -173,151 +132,88 @@ export class CategoriasService implements OnDestroy {
 
     delCategoria( id: number) {
 
-        this.categorias.forEach((categoria, index) => {
-
-            if (categoria.id == id) {
-
-                this.categorias.splice(index, 1)
-            }
-        });
-
-        if (isNullOrUndefined(this.parrafos.length)) {
-
-        } else {
-            this.parrafos.forEach((parrafo, index) => {
-
-                if (parrafo.id_categoria == id) {
-
-                    this.parrafos.splice(index, 1);
-                }
-            });
-        }
-
-        if (isNullOrUndefined(this.servicios.length)) {
-
-        } else {
-            this.servicios.forEach((servicio, index) => {
-
-                if (servicio.id_categoria == id) {
-
-                    this.servicios.splice(index, 1);
-                }
-            });
-        }
+        this.dataService.delCategoria(id);
+        this.dataService.delParrafosCat(id);
+        this.dataService.delImagesCat(id);
+        this.dataService.delServCat(id);
+    
     }
 
-    newSubcategoria( subcategoria: Subcategoria, parrafos: Parrafo[], servicios: Servicio[] ) {
+    newSubcategoria( subcategoria: Subcategoria, parrafos: Parrafo[], servicios: Servicio[], images: Img[] ) {
 
-        if (isNullOrUndefined(this.subcategorias.length)) {
+        subcategoria.id = this.dataService.newSubCategoriaId();
+ 
+        this.dataService.addSubcategoria(subcategoria);
 
-            subcategoria.id = 0;
-        } else {
+        if (parrafos.length) {
 
-            subcategoria.id = this.subcategorias[this.subcategorias.length - 1].id + 1;
-        }
-        this.subcategorias.push(subcategoria);
-
-        if (isNullOrUndefined(parrafos.length)) {
-
-        } else {
-
-            parrafos.forEach((parrafo, index) => {
+            parrafos.forEach( parrafo => {
                 parrafo.id_subcategoria = subcategoria.id
+                parrafo.id = this.dataService.newParrafoId();
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    parrafo.id = 0
-                } else {
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+                this.dataService.addParrafo(parrafo);
             })
         }
 
-        if (isNullOrUndefined(servicios.length)) {
+        if (servicios.length) {
 
-        } else {
-
-            servicios.forEach((servicio, index) => {
+            servicios.forEach( servicio => {
                 servicio.id_subcategoria = subcategoria.id
+                servicio.id = this.dataService.newServicioId();
+                
+                this.dataService.addServicio(servicio);
+            })
+        }
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    servicio.id = 0
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
-                this.servicios.push(servicio);
+        if (images.length) {
+
+            images.forEach( image => {
+                image.id_subcategoria = subcategoria.id
+                image.id = this.dataService.newImageId();
+                
+                this.dataService.addImage(image);
             })
         }
 
     }
 
-    updtSubcategoria( subcategoria: Subcategoria, parrafos: Parrafo[], servicios: Servicio[] ) {
+    updtSubcategoria( subcategoria: Subcategoria, parrafos: Parrafo[], servicios: Servicio[], images: Img[] ) {
 
-        this.subcategorias.forEach((old_subcategoria, index) => {
+        this.dataService.updtSubcategoria(subcategoria);
 
-            if (old_subcategoria.id == subcategoria.id) {
+        if (parrafos.length) {
 
-                this.subcategorias[index] = subcategoria
-            }
-        });
+            this.dataService.delParrafosCat(subcategoria.id);
 
-        if (isNullOrUndefined(parrafos.length)) {
-
-        } else {
-
-            if (isNullOrUndefined(this.parrafos.length)) {
-
-            } else {
-
-                this.parrafos.forEach((old_parrafo, index) => {
-
-                    if (old_parrafo.id_subcategoria == subcategoria.id) {
-
-                        this.parrafos.splice(index, 1);
-                    }
-                });
-            }
-
-            parrafos.forEach((parrafo, index) => {
+            parrafos.forEach( parrafo => {
                 parrafo.id_subcategoria = subcategoria.id
-
-                if (isNullOrUndefined(this.parrafos.length)) {
-
-                    parrafo.id = 0
-                } else {
-
-                    parrafo.id = this.parrafos[this.parrafos.length - 1].id + 1;
-                }
-                this.parrafos.push(parrafo);
+                parrafo.id = this.dataService.newParrafoId();
+                
+                this.dataService.addParrafo(parrafo);
             })
         }
 
-        if (isNullOrUndefined(servicios.length)) {
+        if (servicios.length) {
 
-        } else {
+            this.dataService.delServSubcat(subcategoria.id);
 
-            if (isNullOrUndefined(this.servicios.length)) {
-
-            } else {
-
-                this.servicios.forEach((old_servicio, index) => {
-
-                    if (old_servicio.id_subcategoria == subcategoria.id) {
-
-                        this.servicios.splice(index, 1);
-                    }
-                });
-            }
-
-            servicios.forEach((servicio, index) => {
+            servicios.forEach( servicio => {
                 servicio.id_subcategoria = subcategoria.id
+                servicio.id = this.dataService.newServicioId();
+                
+                this.dataService.addServicio(servicio);
+            })
+        }
 
-                if (isNullOrUndefined(this.servicios.length)) {
-                    servicio.id = 0;
-                } else {
-                    servicio.id = this.servicios[this.servicios.length - 1].id + 1;
-                }
-                this.servicios.push(servicio);
+        if (images.length) {
+
+            this.dataService.delImagesSubcat(subcategoria.id);
+
+            images.forEach( image => {
+                image.id_subcategoria = subcategoria.id
+                image.id = this.dataService.newImageId();
+                
+                this.dataService.addImage(image);
             })
         }
 
@@ -325,40 +221,14 @@ export class CategoriasService implements OnDestroy {
 
     delSubcategoria( id: number ) {
 
-        this.subcategorias.forEach((subcategoria, index) => {
+        this.dataService.delSubcategoria(id);
+        this.dataService.delParrafosSubcat(id);
+        this.dataService.delImagesSubcat(id);
+        this.dataService.delServSubcat(id);
 
-            if (subcategoria.id == id) {
-
-                this.subcategorias.splice(index, 1)
-            }
-        });
-
-        if (isNullOrUndefined(this.parrafos.length)) {
-
-        } else {
-            this.parrafos.forEach((parrafo, index) => {
-
-                if (parrafo.id_subcategoria == id) {
-
-                    this.parrafos.splice(index, 1);
-                }
-            });
-        }
-
-        if (isNullOrUndefined(this.servicios.length)) {
-
-        } else {
-            this.servicios.forEach((servicio, index) => {
-
-                if (servicio.id_subcategoria == id) {
-
-                    this.servicios.splice(index, 1);
-                }
-            });
-        }
     }
 
     ngOnDestroy() {
-        this.stop.next(true)
+
     }
 }

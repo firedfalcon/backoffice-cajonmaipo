@@ -1,0 +1,28 @@
+.form-container {
+    display: flex;
+    width: 100%;
+}
+
+.form-block {
+    width: 60%;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 3%;
+    padding-bottom: 0px;
+    font-size: 14px;
+}
+
+.formImages {
+    padding-top: 3%;
+    min-height: 100%;
+}
+
+.textField {
+    width: 90%;
+    min-height: 70%;
+}
+
+.asociadoInput {
+    min-width: 80%;
+    min-height: 100%;
+}
