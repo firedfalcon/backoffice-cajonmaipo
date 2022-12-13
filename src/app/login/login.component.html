@@ -12,7 +12,7 @@
             <mat-card-tittle class="text-tittle">
                 <br>
                 <h1>
-                    Inicio sesión
+                    Inicio sesión administrador
                 </h1>
             </mat-card-tittle>
         </mat-card-header>
@@ -20,24 +20,26 @@
         <form>
             <mat-card-content class="border">
                 <mat-form-field class="example-full-width" appearance="fill">
-                    <mat-label>Email</mat-label>
-                    <input type="email" matInput [formControl]="emailFormControl" placeholder="Ex. pat@example.com">
-                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                    <mat-label>Nombre</mat-label>
+                    <input type="text" matInput placeholder="Nombre">
+                    <!-- [formControl]="emailFormControl" -->
+                    <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
                         Please enter a valid email address
                     </mat-error>
                     <mat-error *ngIf="emailFormControl.hasError('required')">
                         Email is <strong>required</strong>
-                    </mat-error>
+                    </mat-error> -->
                 </mat-form-field>
                 <mat-form-field class="example-full-width" appearance="fill">
                     <mat-label>Password</mat-label>
-                    <input type="password" matInput [formControl]="emailFormControl" placeholder="asdf1234">
-                    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                    <input type="password" matInput placeholder="Password">
+                    <!-- [formControl]="emailFormControl" -->
+                    <!-- <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
                         Please enter a valid Password
                     </mat-error>
                     <mat-error *ngIf="emailFormControl.hasError('required')">
                         Password is <strong>required</strong>
-                    </mat-error>
+                    </mat-error> -->
                 </mat-form-field>
             </mat-card-content>
             <button mat-stroked-button color="primary"  type="submit" class="border" (click)="submit()">Login</button>
